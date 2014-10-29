@@ -1,0 +1,14 @@
+[package]
+
+name = "ferrum"
+version = "0.0.1"
+authors = []
+
+[[bin]]
+
+name = "ferrum"
+path = "src/main.rs"
+
+[dependencies.nickel]
+
+git = "https://github.com/nickel-org/nickel"
