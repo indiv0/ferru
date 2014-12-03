@@ -1,6 +1,7 @@
 extern crate serialize;
 extern crate nickel;
 extern crate http;
+extern crate rustdoc;
 
 use nickel::{Nickel, HttpRouter};
 use std::io::net::ip::Ipv4Addr;
@@ -12,6 +13,7 @@ fn main() {
     let mut router = Nickel::router();
 
     router.get("/", controllers::root_handler);
+    router.get("/blog/:post_year/:post_id", controllers::get_blog_post);
 
     server.utilize(router);
 
