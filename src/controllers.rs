@@ -16,6 +16,7 @@ use std::io::{
     File
 };
 
+/// Render the index page.
 pub fn root_handler(_request: &Request, response: &mut Response) {
     let mut data = HashMap::<&str, &str>::new();
     data.insert("name", "user");
