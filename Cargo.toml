@@ -12,3 +12,7 @@ path = "src/main.rs"
 [dependencies.nickel]
 
 git = "https://github.com/nickel-org/nickel"
+
+[dependencies.toml]
+
+git = "https://github.com/alexcrichton/toml-rs"
