@@ -31,9 +31,6 @@ string -> &'input str
     = (letter / digit / "_" / "-")+
     { match_str }
 
-eolEscapeSequence -> char
-    = "\\" eol:eol { '\n' }
-
 digit
     = [0-9]
 
