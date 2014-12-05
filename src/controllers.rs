@@ -12,10 +12,7 @@ use nickel::{
 use nickel::mimes::MediaType;
 use rustdoc::html::markdown::Markdown;
 use std::collections::HashMap;
-use std::io::{
-    BufferedReader,
-    File
-};
+use std::io::File;
 
 use parser;
 
