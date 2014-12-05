@@ -10,4 +10,8 @@ impl Post {
     pub fn new(header: HashMap<String, String>, content: &str) -> Post {
         Post { header: header, content: content.to_string() }
     }
+
+    pub fn content(&self) -> &str {
+        self.content.as_slice()
+    }
 }
