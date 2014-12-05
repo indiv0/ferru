@@ -1,11 +1,11 @@
-Title: Arch Linux: Take Two
-Date: 2014-06-03
-Tags: linux, wm, dwm, bspwm, arch
-Category: blog
-Slug: arch-linux-take-two
-Author: Nikita Pekin
-Summary: My re-installation and re-configuration of Arch Linux.
-Status: draft
+title: Arch Linux: Take Two
+date: 2014-06-03
+tags: linux, wm, dwm, bspwm, arch
+category: blog
+slug: arch-linux-take-two
+author: Nikita Pekin
+summary: My re-installation and re-configuration of Arch Linux.
+status: draft
 
 First, I installed Arch Linux.
 I won't bother writing down a instructions here, as the [beginner's guide](https://wiki.archlinux.org/index.php/beginners%27_guide) and [installation guide](https://wiki.archlinux.org/index.php/Installation_guide) are excellent resources which do a much better job of explaining the installation procedure than I could.

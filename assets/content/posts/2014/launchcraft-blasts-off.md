@@ -1,10 +1,10 @@
-Title: Launchcraft Blasts Off!
-Date: 2014-01-30
-Tags: minecraft, python
-Category: blog
-Slug: launchcraft-blasts-off
-Author: Nikita Pekin
-Summary: An introduction to Launchcraft - my new script, used for easy Minecraft mod and pack installation
+title: Launchcraft Blasts Off!
+date: 2014-01-30
+tags: minecraft, python
+category: blog
+slug: launchcraft-blasts-off
+author: Nikita Pekin
+summary: An introduction to Launchcraft - my new script, used for easy Minecraft mod and pack installation
 
 I got tired of re-installing Minecraft and all the mods I use, so I decided to release [Launchcraft](https://github.com/Indiv0/launchcraft).
 

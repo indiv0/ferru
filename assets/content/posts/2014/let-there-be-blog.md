@@ -1,10 +1,10 @@
-Title: Let There Be Blog
-Date: 2014-01-16
-Tags: website
-Category: blog
-Slug: let-there-be-blog
-Author: Nikita Pekin
-Summary: A basic introduction to the initial iteration of my blog, along with my motivations for creating it
+title: Let There Be Blog
+date: 2014-01-16
+tags: website
+category: blog
+slug: let-there-be-blog
+author: Nikita Pekin
+summary: A basic introduction to the initial iteration of my blog, along with my motivations for creating it
 
 Following my recent discovery of the [Ghost](https://ghost.org/) blogging platform, I began to ponder the idea of setting up a blog on my website.
 

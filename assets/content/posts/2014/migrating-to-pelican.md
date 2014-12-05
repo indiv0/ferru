@@ -1,10 +1,10 @@
-Title: Migrating to Pelican
-Date: 2014-03-08
-Tags: website, python, flask, linux
-Category: blog
-Slug: migrating-to-pelican
-Author: Nikita Pekin
-Summary: Migrating my Flask website to Pelican and GitHub Pages
+title: Migrating to Pelican
+date: 2014-03-08
+tags: website, python, flask, linux
+category: blog
+slug: migrating-to-pelican
+author: Nikita Pekin
+summary: Migrating my Flask website to Pelican and GitHub Pages
 
 Initially this was going to be a post about deploying my newly created website to Dokku. 
 

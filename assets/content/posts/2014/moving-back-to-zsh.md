@@ -1,10 +1,10 @@
-Title: Moving Back to ZSH
-Date: 2014-02-17
-Tags: linux, terminal, zsh, bash, urxvt, powerline, terminus
-Category: blog
-Slug: moving-back-to-zsh
-Author: Nikita Pekin
-Summary: A guide on returning to zsh from bash, along with instructions on how to solve common problems that arise and install custom modifications like powerline
+title: Moving Back to ZSH
+date: 2014-02-17
+tags: linux, terminal, zsh, bash, urxvt, powerline, terminus
+category: blog
+slug: moving-back-to-zsh
+author: Nikita Pekin
+summary: A guide on returning to zsh from bash, along with instructions on how to solve common problems that arise and install custom modifications like powerline
 
 After using bash for about a year now, I've decided to try [zsh](http://www.zsh.org/) again. To do this, I began by opening up the [zsh page](https://wiki.archlinux.org/index.php/zsh) on the trusty Arch Linux wiki to use as a starting guide.
 

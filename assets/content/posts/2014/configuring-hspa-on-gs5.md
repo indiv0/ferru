@@ -1,11 +1,11 @@
-Title: Configuring HSPA+ on the Samsung Galaxy S5 SG-G900H
-Date: 2014-06-19
-Tags: android, samsung, gs5, hspa, data, network
-Category: android
-Slug: configuring-hspa-on-gs5
-Author: Nikita Pekin
-Summary: A guide to configuring HSPA+ on the Samsung Galaxy S5 SG-G900H
-Status: draft
+sitle: Configuring HSPA+ on the Samsung Galaxy S5 SG-G900H
+date: 2014-06-19
+tags: android, samsung, gs5, hspa, data, network
+category: android
+slug: configuring-hspa-on-gs5
+author: Nikita Pekin
+summary: A guide to configuring HSPA+ on the Samsung Galaxy S5 SG-G900H
+status: draft
 
 I recently replaced my Samsung GS4 with the Samsung Galaxy S5, because my GS4's microphone started to sound horrible and because the darn thing refused to charge (the port was broken).
 

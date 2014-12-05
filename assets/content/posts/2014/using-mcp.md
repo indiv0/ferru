@@ -1,11 +1,11 @@
-Title: Using MCP
-Date: 2014-08-24
-Tags: minecraft, mcp
-Category: blog
-Slug: using-mcp
-Author: Nikita Pekin
-Summary: Using MCP.
-Status: draft
+title: Using MCP
+date: 2014-08-24
+tags: minecraft, mcp
+category: blog
+slug: using-mcp
+author: Nikita Pekin
+summary: Using MCP.
+status: draft
 
 # Prerequisites
 

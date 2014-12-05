@@ -1,10 +1,10 @@
-Title: Jekyllification
-Date: 2014-01-23
-Tags: website
-Category: blog
-Slug: jekyllification
-Author: Nikita Pekin
-Summary: Using Jekyll themes with Flask
+title: Jekyllification
+date: 2014-01-23
+tags: website
+category: blog
+slug: jekyllification
+author: Nikita Pekin
+summary: Using Jekyll themes with Flask
 
 So I decided to re-design my site (again) and this time I decided to use the [Hyde](http://andhyde.com/) theme for [Jekyll](http://jekyllrb.com/).
 

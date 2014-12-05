@@ -1,11 +1,11 @@
-Title: My FreeNAS Build
-Date: 2014-08-21
-Tags: bsd, freebsd, nas, freenas, hardware
-Category: blog
-Slug: freenas-build
-Author: Nikita Pekin
-Summary: Constructing and setting up a FreeNAS system.
-Status: draft
+title: My FreeNAS Build
+date: 2014-08-21
+tags: bsd, freebsd, nas, freenas, hardware
+category: blog
+slug: freenas-build
+author: Nikita Pekin
+summary: Constructing and setting up a FreeNAS system.
+status: draft
 
 This is my post documenting my FreeNAS build.
 

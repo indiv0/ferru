@@ -1,11 +1,11 @@
-Title: Running Flask on Jython
-Date: 2014-02-05
-Tags: website, linux, jython, python, java
-Category: blog
-Slug: running-flask-on-jython
-Author: Nikita Pekin
-Summary: Short version for index and feeds
-Status: draft
+title: Running Flask on Jython
+date: 2014-02-05
+tags: website, linux, jython, python, java
+category: blog
+slug: running-flask-on-jython
+author: Nikita Pekin
+summary: Short version for index and feeds
+status: draft
 
 The [MinerApocalypse](http://www.reddit.com/r/minerapocalypse/) plugin development team (pretty much myself and [/u/ams2990]()) are building a block-logging suite for use on the MinerApocalypse server.
 

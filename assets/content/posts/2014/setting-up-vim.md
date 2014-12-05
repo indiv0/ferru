@@ -1,10 +1,10 @@
-Title: Setting Up Vim
-Date: 2014-02-18
-Tags: vim, terminal, linux
-Category: blog
-Slug: setting-up-vim
-Author: Nikita Pekin
-Summary: Setting up an using a basic vim environment - with vundle, a color scheme, and syntax highlighting
+title: Setting Up Vim
+date: 2014-02-18
+tags: vim, terminal, linux
+category: blog
+slug: setting-up-vim
+author: Nikita Pekin
+summary: Setting up an using a basic vim environment - with vundle, a color scheme, and syntax highlighting
 
 After completing my initial [zsh setup](/blog/moving-back-to-zsh), I've decided to finally begin what I've been putting off - setting up vim.
 

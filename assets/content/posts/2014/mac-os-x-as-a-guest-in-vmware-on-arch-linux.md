@@ -1,10 +1,10 @@
-Title: Mac OS X as a Guest in VMware on Arch Linux
-Date: 2014-01-31
-Tags: vm, osx, linux, vmware, python
-Category: blog
-Slug: mac-os-x-as-a-guest-in-vmware-on-arch-linux
-Author: Nikita Pekin
-Summary: A guide to setting up and using a Mac OS X VM on Arch Linux
+title: Mac OS X as a Guest in VMware on Arch Linux
+date: 2014-01-31
+tags: vm, osx, linux, vmware, python
+category: blog
+slug: mac-os-x-as-a-guest-in-vmware-on-arch-linux
+author: Nikita Pekin
+summary: A guide to setting up and using a Mac OS X VM on Arch Linux
 
 I needed to package my [Launchcraft](https://github.com/Indiv0/launchcraft/) script for OS X.
 

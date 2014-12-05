@@ -1,11 +1,11 @@
-Title: Securely Storing Passwords with Pass
-Date: 2014-02-25
-Tags: security, pass, linux, encryption, nsa
-Category: security
-Slug: securely-storing-passwords-with-pass
-Author: Nikita Pekin
-Summary: A basic, unverified guide to basic local password storage and encryption with GPG
-Status: draft
+title: Securely Storing Passwords with Pass
+date: 2014-02-25
+tags: security, pass, linux, encryption, nsa
+category: security
+slug: securely-storing-passwords-with-pass
+author: Nikita Pekin
+summary: A basic, unverified guide to basic local password storage and encryption with GPG
+status: draft
 
 So with the recent NSA/PRISM revelations, I decided to store my passwords securely.
 
