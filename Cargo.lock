@@ -3,6 +3,7 @@ name = "ferrum"
 version = "0.0.1"
 dependencies = [
  "nickel 0.1.0 (git+https://github.com/nickel-org/nickel)",
+ "peg 0.1.0 (git+https://github.com/kevinmehall/rust-peg)",
  "toml 0.1.2 (git+https://github.com/alexcrichton/toml-rs)",
 ]
 
@@ -122,6 +123,11 @@ source = "git+https://github.com/sfackler/rust-openssl.git#fd680e8a336f8870a411a
 dependencies = [
  "pkg-config 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
+
+[[package]]
+name = "peg"
+version = "0.1.0"
+source = "git+https://github.com/kevinmehall/rust-peg#aa2325df45978f7335dff7e52591b729c391ff67"
 
 [[package]]
 name = "pkg-config"

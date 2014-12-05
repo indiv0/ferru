@@ -8,6 +8,7 @@ extern crate getopts;
 extern crate http;
 #[phase(plugin, link)] extern crate log;
 extern crate nickel;
+#[phase(plugin)]extern crate peg_syntax_ext;
 extern crate rustdoc;
 extern crate serialize;
 extern crate toml;
@@ -22,6 +23,7 @@ use nickel::{Nickel, HttpRouter};
 mod config;
 mod controllers;
 mod error;
+mod parser;
 
 static DEFAULT_CONFIG_PATH: &'static str = "./config.toml";
 

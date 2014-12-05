@@ -1,0 +1,70 @@
+use std::collections::HashMap;
+
+#[export]
+header -> HashMap<&'input str, &'input str>
+    = fields:(field:header_field eol? { println!("{}", field); field })*
+    {
+        let mut map = HashMap::new();
+        for &(k, v) in fields.iter() {
+            map.insert(k, v);
+        }
+        map
+    }
+
+header_field -> (&'input str, &'input str)
+    = key:string ": " value:string
+    { (key, value) }
+
+string -> &'input str
+    = (letter / digit / "_" / "-")+
+    { match_str }
+
+eolEscapeSequence -> char
+    = "\\" eol:eol { '\n' }
+
+digit
+    = [0-9]
+
+hexDigit
+    = [0-9a-fA-F]
+
+character
+    = !(eolChar) .
+
+letter
+    = lowerCaseLetter
+    / upperCaseLetter
+
+lowerCaseLetter
+    = [a-z]
+
+upperCaseLetter
+    = [A-Z]
+
+__ = (whitespace / eol / comment)*
+
+/* Modeled after ECMA-262, 5th ed., 7.4. */
+comment
+    = singleLineComment
+    / multiLineComment
+
+singleLineComment
+    = "//" (!eolChar .)*
+
+multiLineComment
+    = "/*" (!"*/" .)* "*/"
+
+/* Modeled after ECMA-262, 5th ed., 7.3. */
+eol
+    = "\n"
+    / "\r\n"
+    / "\r"
+    / "\u2028"
+    / "\u2029"
+
+eolChar
+    = [\n\r\u2028\u2029]
+    /* Modeled after ECMA-262, 5th ed., 7.2. */
+
+whitespace
+    = [ \t\u00A0\uFEFF\u1680\u180E\u2000-\u200A\u202F\u205F\u3000] // \v\f removed
