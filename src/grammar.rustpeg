@@ -1,12 +1,20 @@
 use std::collections::HashMap;
 
+use post::Post;
+
 #[export]
-header -> HashMap<&'input str, &'input str>
-    = fields:(field:header_field eol? { println!("{}", field); field })*
+post -> Post
+    = header:header eol content:astring
+    { Post::new(header, content) }
+
+// TODO: Look into replacing the Strings with slices.
+#[export]
+header -> HashMap<String, String>
+    = fields:(field:header_field eol? { field })*
     {
         let mut map = HashMap::new();
         for &(k, v) in fields.iter() {
-            map.insert(k, v);
+            map.insert(k.to_string(), v.to_string());
         }
         map
     }
@@ -14,6 +22,10 @@ header -> HashMap<&'input str, &'input str>
 header_field -> (&'input str, &'input str)
     = key:string ": " value:string
     { (key, value) }
+
+astring -> &'input str
+    = .*
+    { match_str}
 
 string -> &'input str
     = (letter / digit / "_" / "-")+
