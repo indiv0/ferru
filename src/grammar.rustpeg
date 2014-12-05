@@ -4,7 +4,7 @@ use post::Post;
 
 #[export]
 post -> Post
-    = header:header eol content:astring
+    = header:header eol content:(.* { match_str })
     { Post::new(header, content) }
 
 // TODO: Look into replacing the Strings with slices.
@@ -20,16 +20,16 @@ header -> HashMap<String, String>
     }
 
 header_field -> (&'input str, &'input str)
-    = key:string ": " value:string
+    = key:identifier ": " value:string
     { (key, value) }
 
-astring -> &'input str
-    = .*
-    { match_str}
+identifier -> &'input str
+    = chars:((letter / "_") (letter / digit / "_")*)
+    { match_str }
 
 string -> &'input str
-    = (letter / digit / "_" / "-")+
-    { match_str }
+    = chars:((!(eolChar) .)* { match_str })
+    { chars }
 
 digit
     = [0-9]

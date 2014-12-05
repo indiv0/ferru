@@ -14,9 +14,7 @@ mod tests {
     fn test_invalid_header() {
         assert!(super::header(": ").is_err());
         assert!(super::header(": \n").is_err());
-        assert!(super::header("title: ").is_err());
         assert!(super::header("title:sometitle").is_err());
-        assert!(super::header("title: \n").is_err());
     }
 
     #[test]
@@ -27,6 +25,9 @@ mod tests {
         let map = map;
 
         assert_eq!(super::header("title: sometitle\ndate: 2014-01-01\n"), Ok(map));
+
+        assert!(super::header("title: ").is_ok());
+        assert!(super::header("title: \n").is_ok());
     }
 
     #[test]
@@ -36,6 +37,8 @@ mod tests {
 
     #[test]
     fn test_post() {
+        assert!(super::post("title: sometitle\ndate: 2014-01-01\n\nthis is a post.").is_ok());
+
         let mut header = HashMap::new();
         header.insert("title".to_string(), "sometitle".to_string());
         header.insert("date".to_string(), "2014-01-01".to_string());
