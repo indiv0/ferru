@@ -17,7 +17,7 @@ use std::os;
 
 use getopts::{optopt, optflag, getopts, OptGroup};
 
-use nickel::{Nickel, HttpRouter};
+use nickel::{Nickel, HttpRouter, StaticFilesHandler};
 
 mod config;
 mod controllers;
@@ -78,6 +78,10 @@ fn main() {
 
     // Attach the router to the server.
     server.utilize(router);
+    // Enable static file serving.
+    // NOTE: outside the dev environment, use nginx instead.
+    // TODO: ensure this only works in testing (compiler flags?).
+    server.utilize(StaticFilesHandler::new("assets/static/"));
 
     // Register error handling routes.
     server.handle_error(controllers::custom_errors);
