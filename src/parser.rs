@@ -1,4 +1,4 @@
-pub use self::grammar::{ header, post };
+pub use self::grammar::{header, post};
 
 // grammar.rustpeg contains the parsing expression grammar needed in order to
 // parse posts.

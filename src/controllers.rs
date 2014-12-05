@@ -76,7 +76,7 @@ pub fn custom_errors(err: &NickelError, _req: &Request, response: &mut Response)
             Ok(Halt)
         },
         ErrorWithStatusCode(InternalServerError) => {
-            handle_error(NotFound, "500", "An error has occured!", response);
+            handle_error(InternalServerError, "500", "An error has occured!", response);
             Ok(Halt)
         },
         _ => Ok(Continue)
