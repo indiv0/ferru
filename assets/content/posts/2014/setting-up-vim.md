@@ -20,18 +20,22 @@ After reading the instructions on the base16-vim repository, I decided to instal
 
 With Vundle, installing base16-chalk was as easy as editing `~/.vimrc` to include:
 
-    :::vim
-    Bundle 'chriskempson/base16-vim'
+```vimrc
+:::vim
+Bundle 'chriskempson/base16-vim'
 
-    set background=dark
-    let base16colorspace=256  " Access colors present in 256 colorspace
-    colorscheme base16-chalk
+set background=dark
+let base16colorspace=256  " Access colors present in 256 colorspace
+colorscheme base16-chalk
+```
 
 ## Syntax Highlighting ##
 
 I wanted all of my files to automatically have their syntax highlighted, so I put this line in my `~/.vimrc`:
 
-    :::vim
-    syntax on
+```vimrc
+:::vim
+syntax on
+```
 
 So far these are all of the modifications I've performed to vim. Time to begin using it.
