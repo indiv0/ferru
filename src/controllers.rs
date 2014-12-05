@@ -17,6 +17,8 @@ use std::io::{
     File
 };
 
+use parser;
+
 /// Render the index page.
 pub fn root_handler(_request: &Request, response: &mut Response) {
     let mut data = HashMap::<&str, &str>::new();
@@ -37,27 +39,15 @@ pub fn get_blog_post(request: &Request, response: &mut Response) {
     // Read the post markdown from the disk.
     let content = File::open(&post_path).read_to_end().unwrap();
     let content = String::from_utf8(content).unwrap();
-    let mut content = content.as_slice().split_str("\n\n");
-    //let mut file = BufferedReader::new(File::open(&post_path));
-    //let mut contents = "";
-    let heading = content.next().unwrap();
-    let mut content = content.map(|x| x.to_string());
-    let content = content.fold("".to_string(), |a, b| a + "\n\n".to_string() + b);
-    /*for line in file.lines() {
-        let line = line.unwrap();
-        let split: Vec<&str> = line.as_slice().rsplitn(1, ": ").collect();
-        match split.get(1) {
-            Ok(value) => {
-                println!("value");
-            }
-            Err(e) => {
-                contents.push_str(split.get(0));
-            }
+    let post = match parser::post(content.as_slice()) {
+        Ok(post) => post,
+        Err(e) => {
+            error!("Failed to parse post: {}", e);
+            handle_error(InternalServerError, "500", "An internal error has occurred!", response);
+            return
         }
-        //print!("{}", line.unwrap());
-        println!("{}", split);
-    }*/
-    let html_content = format!("{}", Markdown(content.as_slice()));
+    };
+    let html_content = format!("{}", Markdown(post.content()));
 
     let mut data = HashMap::<&str, &str>::new();
     data.insert("content", html_content.as_slice());
