@@ -13,7 +13,6 @@ extern crate rustdoc;
 extern crate serialize;
 extern crate toml;
 
-use std::io::net::ip::Ipv4Addr;
 use std::os;
 
 use getopts::{optopt, optflag, getopts, OptGroup};
@@ -24,6 +23,7 @@ mod config;
 mod controllers;
 mod error;
 mod parser;
+mod post;
 
 static DEFAULT_CONFIG_PATH: &'static str = "./config.toml";
 
