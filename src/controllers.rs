@@ -1,4 +1,5 @@
 use http::status::Status;
+use http::status::Status::{Forbidden, NotFound, InternalServerError};
 use nickel::{
     Continue,
     ErrorWithStatusCode,
@@ -64,8 +65,6 @@ pub fn get_blog_post(request: &Request, response: &mut Response) {
 }
 
 pub fn custom_errors(err: &NickelError, _req: &Request, response: &mut Response) -> MiddlewareResult {
-    use http::status::Status::{Forbidden, NotFound, InternalServerError};
-
     match err.kind {
         ErrorWithStatusCode(Forbidden) => {
             handle_error(Forbidden, "403", "You are not authorized to view this page", response);
