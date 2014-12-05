@@ -46,7 +46,7 @@ After creating a basic Flask site, the following workaround needed to be added t
     :::python
     # workaround for Jython, see: http://bugs.jython.org/issue1521
     import __builtin__
-    if not hasattr(__builtin__, 'buffer'):
+    if not hasattr(__builtin__, "buffer"):
         def _buffer(object, offset=None, size=None):
             if offset is None:
                 offset = 0
