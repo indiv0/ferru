@@ -75,6 +75,7 @@ fn main() {
     // Enable routes for index and blog pages.
     router.get("/", controllers::root_handler);
     router.get("/blog/:post_year/:post_id", controllers::get_blog_post);
+    router.get("/:page_id", controllers::get_page);
 
     // Attach the router to the server.
     server.utilize(router);

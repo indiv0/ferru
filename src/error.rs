@@ -18,6 +18,8 @@ pub enum ErrorKind {
     IoError(io::IoError),
     /// The configuration file is improperly formatted.
     InvalidConfigError,
+    /// Failed to parse a string with the parser.
+    ParserError(String),
 }
 
 /// Represents a Ferrum error. For the most part you should be using
@@ -33,9 +35,10 @@ pub struct FerrumError {
 impl error::Error for FerrumError {
     fn description(&self) -> &str {
         match self.kind {
-            DecodingError(_) => "Error decoding file",
-            IoError(_) => "Encountered an I/O error",
-            ErrorKind::InvalidConfigError => "Invalid configuration file"
+            ErrorKind::DecodingError(_) => "Error decoding file",
+            ErrorKind::IoError(_) => "Encountered an I/O error",
+            ErrorKind::InvalidConfigError => "Invalid configuration file",
+            ErrorKind::ParserError(_) => "Failed to parse a string",
         }
     }
 
