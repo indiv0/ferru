@@ -37,9 +37,6 @@ eolEscapeSequence -> char
 digit
     = [0-9]
 
-hexDigit
-    = [0-9a-fA-F]
-
 character
     = !(eolChar) .
 
@@ -53,18 +50,7 @@ lowerCaseLetter
 upperCaseLetter
     = [A-Z]
 
-__ = (whitespace / eol / comment)*
-
-/* Modeled after ECMA-262, 5th ed., 7.4. */
-comment
-    = singleLineComment
-    / multiLineComment
-
-singleLineComment
-    = "//" (!eolChar .)*
-
-multiLineComment
-    = "/*" (!"*/" .)* "*/"
+__ = (whitespace / eol)*
 
 /* Modeled after ECMA-262, 5th ed., 7.3. */
 eol
