@@ -61,12 +61,12 @@ Then add a new signing key, of type RSA (sign only), with keysize 4096:
 
 Then I created the actual revocation certificate, selecting 1 as the reason for the revocation:
 
-    gpg --output \<my@email.org\>.gpg-revocation-certificate --gen-revoke my@email.org
+    gpg --output <my@email.org>.gpg-revocation-certificate --gen-revoke my@email.org
 
 Export the keypair so that it can be backed up:
 
-    gpg --export-secret-keys --armor my@email.org > \<my@email.org\>.private.gpg-key
-    gpg --export --armor my@email.org > \<my@email.org\>.public.gpg-key
+    gpg --export-secret-keys --armor my@email.org > <my@email.org>.private.gpg-key
+    gpg --export --armor my@email.org > <my@email.org>.public.gpg-key
 
 These three files were then backed up in a safe, long-term storage location (e.g. on a usb in a safety deposit box).
 
