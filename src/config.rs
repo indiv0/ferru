@@ -14,7 +14,13 @@ pub struct Config {
     // IP on which to listen
     ip_addr: String,
     // Port on which to listen
-    pub port: u16,
+    port: u16,
+    // Asset directory path
+    asset_path: String,
+    // Relative path to static files from asset directory
+    static_path: String,
+    // Relative path to content files from asset directory
+    content_path: String,
 }
 
 impl Config {
@@ -34,6 +40,11 @@ impl Config {
             None => Err(panic!((InvalidConfigError, "Failed to parse IP address in config.")))
         }
     }
+
+    pub fn port(&self) -> u16 { self.port }
+    pub fn asset_path(&self) -> &str { self.asset_path.as_slice() }
+    pub fn static_path(&self) -> String { format!("{}/{}", self.asset_path, self.static_path) }
+    pub fn content_path(&self) -> String { format!("{}/{}", self.asset_path, self.content_path) }
 }
 
 /// Creates a default config file.
@@ -51,5 +62,8 @@ pub fn default_config() -> Config {
     Config {
         ip_addr: "127.0.0.1".to_string(),
         port: 3000,
+        asset_path: "assets".to_string(),
+        static_path: "static".to_string(),
+        content_path: "content".to_string()
     }
 }

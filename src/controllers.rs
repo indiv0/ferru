@@ -13,6 +13,7 @@ use nickel::mimes::MediaType;
 use std::collections::HashMap;
 
 use post;
+use util;
 
 /// Render the index page.
 pub fn root_handler(_req: &Request, res: &mut Response) {
@@ -43,15 +44,15 @@ pub fn get_page(req: &Request, res: &mut Response) {
 pub fn custom_errors(err: &NickelError, _req: &Request, res: &mut Response) -> MiddlewareResult {
     match err.kind {
         ErrorWithStatusCode(Forbidden) => {
-            handle_error(Forbidden, "403", "You are not authorized to view this page", res);
+            util::handle_error(Forbidden, "403", "You are not authorized to view this page", res);
             Ok(Halt)
         },
         ErrorWithStatusCode(NotFound) => {
-            handle_error(NotFound, "404", "That file could not be found.", res);
+            util::handle_error(NotFound, "404", "That file could not be found.", res);
             Ok(Halt)
         },
         ErrorWithStatusCode(InternalServerError) => {
-            handle_error(InternalServerError, "500", "An error has occured!", res);
+            util::handle_error(InternalServerError, "500", "An error has occured!", res);
             Ok(Halt)
         },
         _ => Ok(Continue)
@@ -59,11 +60,11 @@ pub fn custom_errors(err: &NickelError, _req: &Request, res: &mut Response) -> M
 }
 
 fn handle_rendered_page(page_path: &str, template_path: &'static str, res: &mut Response) {
-    let page = match post::load_from_disk(page_path.as_slice()) {
+    let page = match post::load_from_disk(&Path::new(page_path)) {
         Ok(page) => page,
         Err(e) => {
             error!("Failed to parse page: {}", e);
-            handle_error(InternalServerError, "500", "An internal error has occurred!", res);
+            util::handle_error(InternalServerError, "500", "An internal error has occurred!", res);
             return
         }
     };
@@ -73,16 +74,4 @@ fn handle_rendered_page(page_path: &str, template_path: &'static str, res: &mut 
     data.insert("content", page_content.as_slice());
     res.content_type(MediaType::Html)
        .render(template_path, &data);
-}
-
-fn handle_error(status_code: Status, error_code: &str, error_message: &str, res: &mut Response) {
-    let mut data = HashMap::<&str, &str>::new();
-
-    data.insert("site_url", "http://nikitapek.in");
-    data.insert("error_code", error_code);
-    data.insert("error_message", error_message);
-
-    res.content_type(MediaType::Html)
-       .status_code(status_code)
-       .render("assets/templates/error.tpl", &data);
 }

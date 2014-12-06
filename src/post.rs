@@ -22,11 +22,9 @@ impl Post {
     }
 }
 
-pub fn load_from_disk(path_str: &str) -> FerrumResult<Post> {
-    let path = Path::new(path_str);
-
+pub fn load_from_disk(path: &Path) -> FerrumResult<Post> {
     // Read the post markdown from the disk.
-    let content = try!(File::open(&path).read_to_end());
+    let content = try!(File::open(path).read_to_end());
     // TODO: replace this unwrap() with a try!
     let content = String::from_utf8(content).unwrap();
     match parser::post(content.as_slice()) {
