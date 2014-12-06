@@ -1,8 +1,0 @@
-/* the humans responsible & colophon */
-/* humanstxt.org */
-
-
-/* TEAM */
-  Author: Nikita Pekin
-  Site: http://nikitapek.in/
-  Location: Ottawa, Canada
