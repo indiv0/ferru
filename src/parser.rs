@@ -1,14 +1,14 @@
-pub use self::grammar::{header, post};
+pub use self::grammar::{header, page};
 
 // grammar.rustpeg contains the parsing expression grammar needed in order to
 // parse posts.
-peg_file! grammar("grammar.rustpeg")
+peg_file! grammar("grammar.rustpeg");
 
 #[cfg(test)]
 mod tests {
     use std::collections::HashMap;
 
-    use post::Post;
+    use page::Page;
 
     #[test]
     fn test_invalid_header() {
@@ -31,21 +31,21 @@ mod tests {
     }
 
     #[test]
-    fn test_invalid_post() {
-        assert!(super::post("title: sometitle\ndate: 2014-01-01\nthis is a post.\nwith multiple lines!").is_err());
+    fn test_invalid_page() {
+        assert!(super::page("title: sometitle\ndate: 2014-01-01\nthis is a post.\nwith multiple lines!").is_err());
     }
 
     #[test]
-    fn test_post() {
-        assert!(super::post("title: sometitle\ndate: 2014-01-01\n\nthis is a post.").is_ok());
+    fn test_page() {
+        assert!(super::page("title: sometitle\ndate: 2014-01-01\n\nthis is a post.").is_ok());
 
         let mut header = HashMap::new();
         header.insert("title".to_string(), "sometitle".to_string());
         header.insert("date".to_string(), "2014-01-01".to_string());
         let header = header;
 
-        let post = Post::new(header, "this is a post.\nwith multiple lines!");
+        let post = Page::new(header, "this is a post.\nwith multiple lines!");
 
-        assert_eq!(super::post("title: sometitle\ndate: 2014-01-01\n\nthis is a post.\nwith multiple lines!"), Ok(post));
+        assert_eq!(super::page("title: sometitle\ndate: 2014-01-01\n\nthis is a post.\nwith multiple lines!"), Ok(page));
     }
 }

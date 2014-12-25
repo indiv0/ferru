@@ -5,102 +5,144 @@
 #![feature(phase)]
 
 extern crate getopts;
-extern crate http;
 #[phase(plugin, link)] extern crate log;
-extern crate nickel;
+extern crate mustache;
 #[phase(plugin)]extern crate peg_syntax_ext;
 extern crate rustdoc;
-extern crate serialize;
-extern crate toml;
 
-use getopts::{optopt, optflag, getopts, OptGroup};
-use nickel::{Nickel, HttpRouter, StaticFilesHandler};
+use getopts::{getopts, optopt, optflag, short_usage, usage, Matches};
 use std::os;
+use std::io;
+use std::io::{fs, Open, ReadWrite};
+use std::io::fs::{File, PathExtensions};
 
-use markdown_page_handler::MarkdownPageHandler;
-
-mod config;
-mod controllers;
 mod error;
-mod markdown_page_handler;
 mod parser;
-mod post;
+mod page;
+mod template;
 mod util;
 
-static DEFAULT_CONFIG_PATH: &'static str = "./config.toml";
+static DEFAULT_SOURCE_PATH: &'static str = "./";
+static DEFAULT_DEST_PATH: &'static str = "./_site/";
 
 fn main() {
-    // Get the arguments.
-    let args: Vec<String> = os::args();
-    // Get the program name.
-    let program = args[0].clone();
-
     // Setup the possible opts.
     let opts = &[
-        optopt("c", "", "config file name", "NAME"),
+        optopt("s", "source", "set source directory", "NAME"),
+        optopt("d", "destination", "set destination directory", "NAME"),
         optflag("h", "help", "print this help menu")
     ];
+
+    let instructions = "Usage: ferrum [command]";
+
+    // Get the arguments and program name.
+    let args: Vec<String> = os::args();
+    let program = args[0].clone();
+
     // Match the opts.
     let matches = match getopts(args.tail(), opts) {
         Ok(m) => { m }
         Err(f) => { panic!(f.to_string()) }
     };
+
     // Check if the help opt is present.
     if matches.opt_present("h") {
-        print_usage(program.as_slice(), opts);
+        println!("{}", usage(program.as_slice(), opts));
         return;
     }
-    // Get the config opt.
-    let config_path = match matches.opt_str("c") {
-        Some(v) => v,
-        None => DEFAULT_CONFIG_PATH.to_string()
+
+    // Retrieve the command.
+    let command = if !matches.free.is_empty() {
+        matches.free[0].clone()
+    } else {
+        println!("{}", short_usage(instructions, opts));
+        return;
     };
 
-    // Load configuration.
-    let config = match config::Config::new(config_path.as_slice()) {
+    match command.as_slice() {
+        "build" => build(matches),
+        _ => {
+            println!("{}", short_usage(instructions, opts));
+            return;
+        }
+    }
+}
+
+fn build(matches: Matches) {
+    // Get the source path opt.
+    let source = match matches.opt_str("s") {
+        Some(v) => Path::new(v),
+        None => Path::new(DEFAULT_SOURCE_PATH)
+    };
+    if !source.exists() {
+        panic!("Source directory \"{}\" does not exist.", source.display());
+    }
+
+    // Get the destination path opt.
+    let dest = match matches.opt_str("d") {
+        Some(v) => Path::new(v),
+        None => Path::new(DEFAULT_DEST_PATH)
+    };
+
+    if !dest.exists() {
+        println!("Destination directory \"{}\" does not exist, creating.", dest.display());
+    } else {
+        println!("Cleaning destination directory \"{}\".", dest.display());
+        fs::rmdir_recursive(&dest).is_ok();
+    }
+    fs::mkdir(&dest, io::USER_RWX).is_ok();
+
+    // Load the templates.
+    let templates = match template::load_templates_from_disk(&source, |p| -> bool {
+        !p.filename_str().unwrap().starts_with(".") &&
+        p.extension_str().unwrap() == "tpl"
+    }) {
         Ok(v) => v,
-        Err(_) => {
-            // Create a default config file if it doesn't exist.
-            warn!("Failed to read config.toml; creating from defaults.");
-            match config::write_default_config(DEFAULT_CONFIG_PATH) {
-                Ok(_) => {},
-                Err(e) => panic!(e)
-            };
-            config::default_config()
+        Err(e) => {
+            println!("Failed to read templates: {}", e);
+            return;
         }
     };
 
-    // Initialize the server and routing.
-    let mut server = Nickel::new();
-    let mut router = Nickel::router();
+    // Copy all non-template and non-page content.
+    if source != dest {
+        match util::copy_recursively(&source, &dest, |p| -> bool {
+            !p.filename_str().unwrap().starts_with(".") &&
+            p != &dest &&
+            p.path_relative_from(&source).unwrap().as_str().unwrap() != "_pages" &&
+            p.path_relative_from(&source).unwrap().as_str().unwrap() != "_templates"
+        }) {
+            Err(e) => panic!("{}", e),
+            _ => {}
+        }
+    }
 
-    // Enable routes for index and blog pages.
-    router.get("/", controllers::root_handler);
-    //router.get("/blog/:post_year/:post_id", controllers::get_blog_post);
-    //router.get("/:page_id", controllers::get_page);
-
-    // Attach the router to the server.
-    server.utilize(router);
-    // Enable Markdown page serving.
-    server.utilize(MarkdownPageHandler::new(config.content_path().as_slice(), "assets/templates/post.tpl"));
-    // Enable static file serving.
-    // NOTE: outside the dev environment, use nginx instead.
-    // TODO: ensure this only works in testing (compiler flags?).
-    server.utilize(StaticFilesHandler::new(config.static_path().as_slice()));
-
-    // Register error handling routes.
-    server.handle_error(controllers::custom_errors);
-
-    // Begin listening on provided IP and port.
-    let ip_addr = match config.ip_addr() {
-        Ok(v) => v,
-        Err(e) => panic!(e)
-    };
-    server.listen(ip_addr, config.port());
-}
-
-fn print_usage(program: &str, _opts: &[OptGroup]) {
-    println!("Usage: {} [options]", program);
-    println!("-c\t\tConfig file");
-    println!("-h --help\tUsage");
+    let pages = page::load_pages_from_disk(&source, |p| -> bool {
+        !p.filename_str().unwrap().starts_with(".")
+    }).unwrap();
+    for (key, page) in pages.iter() {
+        let new_dest = dest.join(key);
+        fs::mkdir_recursive(&new_dest.dir_path(), io::USER_RWX).is_ok();
+        let template = match page.template() {
+            Ok(v) => v.to_string(),
+            Err(_) => {
+                println!("Missing template for page {}", key.display());
+                return;
+            }
+        };
+        match templates.get(&template) {
+            Some(template) => {
+                match File::open_mode(&new_dest, Open, ReadWrite) {
+                    Ok(ref mut file) => {
+                        match page.render_to_file(template, file) {
+                            Ok(_) => println!("Generated {}", new_dest.display()),
+                            Err(e) => panic!("{}", e)
+                        }
+                    },
+                    Err(e) => panic!("{}", e)
+                }
+            },
+            None => panic!("Template \"{}\" not found.", template)
+        };
+    }
 }

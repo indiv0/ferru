@@ -2,161 +2,17 @@
 name = "ferrum"
 version = "0.0.1"
 dependencies = [
- "nickel 0.1.0 (git+https://github.com/nickel-org/nickel)",
- "peg 0.1.0 (git+https://github.com/kevinmehall/rust-peg)",
- "toml 0.1.2 (git+https://github.com/alexcrichton/toml-rs)",
-]
-
-[[package]]
-name = "anymap"
-version = "0.9.0"
-source = "git+https://github.com/nickel-org/anymap.git#15cad51ac750ea5209d5882379a055f9b8057720"
-
-[[package]]
-name = "encoding"
-version = "0.2.4"
-source = "git+https://github.com/lifthrasiir/rust-encoding#2742db463d73f8bce713dedebd454ece450b8fef"
-dependencies = [
- "encoding-index-japanese 1.0.20140915 (git+https://github.com/lifthrasiir/rust-encoding)",
- "encoding-index-korean 1.0.20140915 (git+https://github.com/lifthrasiir/rust-encoding)",
- "encoding-index-simpchinese 1.0.20140915 (git+https://github.com/lifthrasiir/rust-encoding)",
- "encoding-index-singlebyte 1.0.20140915 (git+https://github.com/lifthrasiir/rust-encoding)",
- "encoding-index-tradchinese 1.0.20140915 (git+https://github.com/lifthrasiir/rust-encoding)",
-]
-
-[[package]]
-name = "encoding-index-japanese"
-version = "1.0.20140915"
-source = "git+https://github.com/lifthrasiir/rust-encoding#2742db463d73f8bce713dedebd454ece450b8fef"
-dependencies = [
- "encoding_index_tests 0.1.0 (git+https://github.com/lifthrasiir/rust-encoding)",
-]
-
-[[package]]
-name = "encoding-index-korean"
-version = "1.0.20140915"
-source = "git+https://github.com/lifthrasiir/rust-encoding#2742db463d73f8bce713dedebd454ece450b8fef"
-dependencies = [
- "encoding_index_tests 0.1.0 (git+https://github.com/lifthrasiir/rust-encoding)",
-]
-
-[[package]]
-name = "encoding-index-simpchinese"
-version = "1.0.20140915"
-source = "git+https://github.com/lifthrasiir/rust-encoding#2742db463d73f8bce713dedebd454ece450b8fef"
-dependencies = [
- "encoding_index_tests 0.1.0 (git+https://github.com/lifthrasiir/rust-encoding)",
-]
-
-[[package]]
-name = "encoding-index-singlebyte"
-version = "1.0.20140915"
-source = "git+https://github.com/lifthrasiir/rust-encoding#2742db463d73f8bce713dedebd454ece450b8fef"
-dependencies = [
- "encoding_index_tests 0.1.0 (git+https://github.com/lifthrasiir/rust-encoding)",
-]
-
-[[package]]
-name = "encoding-index-tradchinese"
-version = "1.0.20140915"
-source = "git+https://github.com/lifthrasiir/rust-encoding#2742db463d73f8bce713dedebd454ece450b8fef"
-dependencies = [
- "encoding_index_tests 0.1.0 (git+https://github.com/lifthrasiir/rust-encoding)",
-]
-
-[[package]]
-name = "encoding_index_tests"
-version = "0.1.0"
-source = "git+https://github.com/lifthrasiir/rust-encoding#2742db463d73f8bce713dedebd454ece450b8fef"
-
-[[package]]
-name = "gcc"
-version = "0.1.0"
-source = "git+https://github.com/alexcrichton/gcc-rs#d32b24466d3e0094cef1c1809a04d7a28536f0e0"
-
-[[package]]
-name = "groupable"
-version = "0.1.0"
-source = "git+https://github.com/nickel-org/groupable-rs#74c9e38ede02008fc04c47a33c4ba9b995dc3606"
-
-[[package]]
-name = "http"
-version = "0.1.0-pre"
-source = "git+https://github.com/nickel-org/rust-http.git#5ec615276879254d29f9378b17ec389ee6da848a"
-dependencies = [
- "openssl 0.2.2 (git+https://github.com/sfackler/rust-openssl.git)",
- "time 0.1.0 (git+https://github.com/rust-lang/time)",
- "url 0.1.0 (git+https://github.com/nickel-org/rust-url.git)",
-]
-
-[[package]]
-name = "nickel"
-version = "0.1.0"
-source = "git+https://github.com/nickel-org/nickel#6b89ea8651ce7e1adacdf86c451ff5f0085dfd48"
-dependencies = [
- "anymap 0.9.0 (git+https://github.com/nickel-org/anymap.git)",
- "groupable 0.1.0 (git+https://github.com/nickel-org/groupable-rs)",
- "http 0.1.0-pre (git+https://github.com/nickel-org/rust-http.git)",
- "nickel_macros 0.0.1 (git+https://github.com/nickel-org/nickel)",
- "rust-mustache 0.3.0 (git+https://github.com/nickel-org/rust-mustache.git)",
- "time 0.1.0 (git+https://github.com/rust-lang/time)",
- "url 0.1.0 (git+https://github.com/nickel-org/rust-url.git)",
-]
-
-[[package]]
-name = "nickel_macros"
-version = "0.0.1"
-source = "git+https://github.com/nickel-org/nickel#6b89ea8651ce7e1adacdf86c451ff5f0085dfd48"
-
-[[package]]
-name = "openssl"
-version = "0.2.2"
-source = "git+https://github.com/sfackler/rust-openssl.git#fd680e8a336f8870a411a3047c45b47ee72beb37"
-dependencies = [
- "openssl-sys 0.2.2 (git+https://github.com/sfackler/rust-openssl.git)",
-]
-
-[[package]]
-name = "openssl-sys"
-version = "0.2.2"
-source = "git+https://github.com/sfackler/rust-openssl.git#fd680e8a336f8870a411a3047c45b47ee72beb37"
-dependencies = [
- "pkg-config 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "peg 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rust-mustache 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "peg"
-version = "0.1.0"
-source = "git+https://github.com/kevinmehall/rust-peg#aa2325df45978f7335dff7e52591b729c391ff67"
-
-[[package]]
-name = "pkg-config"
-version = "0.1.0"
+version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "rust-mustache"
-version = "0.3.0"
-source = "git+https://github.com/nickel-org/rust-mustache.git#6f98a76ba46068f04c14b942a182e29eea24350e"
-
-[[package]]
-name = "time"
-version = "0.1.0"
-source = "git+https://github.com/rust-lang/time#afab521f3b91658a3ba2d3e877b7e01699733bef"
-dependencies = [
- "gcc 0.1.0 (git+https://github.com/alexcrichton/gcc-rs)",
-]
-
-[[package]]
-name = "toml"
-version = "0.1.2"
-source = "git+https://github.com/alexcrichton/toml-rs#1e35b001094b20d2452adff305e418591d4000fb"
-
-[[package]]
-name = "url"
-version = "0.1.0"
-source = "git+https://github.com/nickel-org/rust-url.git#5d15bee2d296b0fc3cfae84e69d1d2e865cf9335"
-dependencies = [
- "encoding 0.2.4 (git+https://github.com/lifthrasiir/rust-encoding)",
-]
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
 

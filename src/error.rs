@@ -14,10 +14,14 @@ pub type FerrumResult<T> = Result<T, FerrumError>;
 pub enum ErrorKind {
     /// Failed to decode a file.
     DecodingError(String),
-    /// An IO error was encountered.
-    IoError(io::IoError),
     /// The configuration file is improperly formatted.
     InvalidConfigError,
+    /// A Page is improperly formatted.
+    InvalidPageError,
+    /// An IO error was encountered.
+    IoError(io::IoError),
+    /// A rust-mustache rendering error.
+    MustacheError,
     /// Failed to parse a string with the parser.
     ParserError(String),
 }
@@ -36,8 +40,10 @@ impl error::Error for FerrumError {
     fn description(&self) -> &str {
         match self.kind {
             ErrorKind::DecodingError(_) => "Error decoding file",
-            ErrorKind::IoError(_) => "Encountered an I/O error",
             ErrorKind::InvalidConfigError => "Invalid configuration file",
+            ErrorKind::InvalidPageError => "Improperly formatted Page",
+            ErrorKind::IoError(_) => "Encountered an I/O error",
+            ErrorKind::MustacheError => "Encountered an rust-mustache error",
             ErrorKind::ParserError(_) => "Failed to parse a string",
         }
     }

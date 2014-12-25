@@ -9,14 +9,7 @@ authors = []
 name = "ferrum"
 path = "src/main.rs"
 
-[dependencies.nickel]
+[dependencies]
 
-git = "https://github.com/nickel-org/nickel"
-
-[dependencies.peg]
-
-git = "https://github.com/kevinmehall/rust-peg"
-
-[dependencies.toml]
-
-git = "https://github.com/alexcrichton/toml-rs"
+peg           = "*"
+rust-mustache = "*"

@@ -1,16 +1,28 @@
-use http::status::Status;
-use nickel::Response;
-use nickel::mimes::MediaType;
-use std::collections::HashMap;
+use error::FerrumResult;
 
-pub fn handle_error(status_code: Status, error_code: &str, error_message: &str, res: &mut Response) {
-    let mut data = HashMap::<&str, &str>::new();
+use std::io;
+use std::io::fs;
+use std::io::fs::PathExtensions;
 
-    data.insert("site_url", "http://nikitapek.in");
-    data.insert("error_code", error_code);
-    data.insert("error_message", error_message);
+pub fn copy_recursively(source: &Path, dest: &Path, criteria: |&Path| -> bool) -> FerrumResult<()> {
+    if !source.is_dir() {
+        try!(Err(io::standard_error(io::InvalidInput)))
+    }
 
-    res.content_type(MediaType::Html)
-       .status_code(status_code)
-       .render("assets/templates/error.tpl", &data);
+    let contents = try!(fs::readdir(source));
+    for entry in contents.iter() {
+        if !criteria(entry) { continue; }
+
+        // TODO: remove this unwrap.
+        let new_dest = &dest.join(entry.path_relative_from(source).unwrap());
+
+        if entry.is_dir() {
+            try!(fs::mkdir(new_dest, io::USER_RWX));
+            try!(copy_recursively(entry, new_dest, |p| criteria(p)));
+        } else {
+            try!(fs::copy(entry, new_dest));
+        }
+    }
+
+    Ok(())
 }

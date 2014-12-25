@@ -1,11 +1,13 @@
 use std::collections::HashMap;
 
-use post::Post;
+use page::Page;
 
 #[export]
-post -> Post
+page -> Page
     = header:header eol content:(.* { match_str })
-    { Post::new(header, content) }
+    {
+        Page::new(header, content)
+    }
 
 // TODO: Look into replacing the Strings with slices.
 #[export]
