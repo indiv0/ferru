@@ -52,11 +52,10 @@ impl Page {
     }
 }
 
-pub fn load_pages_from_disk(source: &Path, criteria: |&Path| -> bool) -> FerrumResult<HashMap<Path, Page>> {
+pub fn load_pages_from_disk(pages_path: &Path, criteria: |&Path| -> bool) -> FerrumResult<HashMap<Path, Page>> {
     let mut pages = HashMap::new();
 
-    let pages_path = source.join("_pages");
-    let mut page_dirs = try!(fs::walk_dir(&pages_path));
+    let mut page_dirs = try!(fs::walk_dir(pages_path));
     for path in page_dirs {
         if !path.is_file() { continue; }
         if !criteria(&path) { continue; }
@@ -76,7 +75,7 @@ pub fn load_pages_from_disk(source: &Path, criteria: |&Path| -> bool) -> FerrumR
                 continue;
             }
         };
-        let mut relative_path = path.path_relative_from(&pages_path).unwrap();
+        let mut relative_path = path.path_relative_from(pages_path).unwrap();
         relative_path.set_extension("");
 
         pages.insert(relative_path, page);

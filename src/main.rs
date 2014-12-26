@@ -11,6 +11,7 @@ extern crate mustache;
 extern crate rustdoc;
 
 use getopts::{getopts, optopt, optflag, short_usage, usage, Matches};
+use std::collections::HashMap;
 use std::os;
 use std::io;
 use std::io::{fs, Open, ReadWrite};
@@ -117,9 +118,18 @@ fn build(matches: Matches) {
         }
     }
 
-    let pages = page::load_pages_from_disk(&source, |p| -> bool {
+    let pages = page::load_pages_from_disk(&source.join("_pages"), |p| -> bool {
         !p.filename_str().unwrap().starts_with(".")
     }).unwrap();
+    let posts = page::load_pages_from_disk(&source.join("_posts"), |p| -> bool {
+        !p.filename_str().unwrap().starts_with(".")
+    }).unwrap();
+
+    render_files(&dest, pages, &templates);
+    render_files(&dest, posts, &templates);
+}
+
+fn render_files(dest: &Path, pages: HashMap<Path, page::Page>, templates: &HashMap<String, mustache::Template>) {
     for (key, page) in pages.iter() {
         let new_dest = dest.join(key);
         fs::mkdir_recursive(&new_dest.dir_path(), io::USER_RWX).is_ok();
