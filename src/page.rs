@@ -35,6 +35,12 @@ impl Page {
         let content = format!("{}", Markdown(self.content.as_slice()));
         let mut data = HashMap::<&str, &str>::new();
         data.insert("content", content.as_slice());
+
+        // TODO: find a better way to handle this.
+        for (key, value) in self.header.iter() {
+            data.insert(key.as_slice(), value.as_slice());
+        }
+
         match template.render(wr, &data) {
             Ok(_) => Ok(()),
             Err(e) => Err(FerrumError {
