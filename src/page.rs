@@ -2,12 +2,14 @@ use std::collections::HashMap;
 use std::io::{fs, File};
 use std::io::fs::PathExtensions;
 
-use mustache::Template;
+use mustache::{Data, Template};
+use mustache::Data::StrVal;
 use rustdoc::html::markdown::Markdown;
 
 use error::{FerrumError, FerrumResult};
-use error::ErrorKind::{InvalidPageError, MustacheError, ParserError};
+use error::ErrorKind::{InvalidPageError, ParserError};
 use parser;
+use util;
 
 #[deriving(PartialEq, Show)]
 pub struct Page {
@@ -31,24 +33,21 @@ impl Page {
         }
     }
 
-    pub fn render_to_file<W: Writer>(&self, template: &Template, wr: &mut W) -> FerrumResult<()> {
+    pub fn render_to_file<'a, W: Writer>(&self, template: &Template, wr: &mut W, extra_data: &HashMap<String, Data<'a>>) {
+        let mut data = HashMap::<String, Data<'a>>::new();
+
         let content = format!("{}", Markdown(self.content.as_slice()));
-        let mut data = HashMap::<&str, &str>::new();
-        data.insert("content", content.as_slice());
+        data.insert("content".to_string(), StrVal(content));
 
         // TODO: find a better way to handle this.
         for (key, value) in self.header.iter() {
-            data.insert(key.as_slice(), value.as_slice());
+            data.insert(key.to_string(), StrVal(value.clone()));
+        }
+        for (key, value) in extra_data.iter() {
+            data.insert(key.to_string(), util::copy_data(value));
         }
 
-        match template.render(wr, &data) {
-            Ok(_) => Ok(()),
-            Err(e) => Err(FerrumError {
-                kind: MustacheError,
-                desc: "Mustache templating error",
-                detail: Some(format!("{}", e))
-            })
-        }
+        template.render_data(wr, &Data::Map(data));
     }
 }
 

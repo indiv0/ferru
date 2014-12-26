@@ -17,6 +17,8 @@ use std::io;
 use std::io::{fs, Open, ReadWrite};
 use std::io::fs::{File, PathExtensions};
 
+use mustache::{Data, Template};
+
 mod error;
 mod parser;
 mod page;
@@ -118,25 +120,46 @@ fn build(matches: Matches) {
         }
     }
 
+    debug!("Loading pages from disk");
     let pages = page::load_pages_from_disk(&source.join("_pages"), |p| -> bool {
         !p.filename_str().unwrap().starts_with(".")
     }).unwrap();
+    debug!("Loading posts from disk");
     let posts = page::load_pages_from_disk(&source.join("_posts"), |p| -> bool {
         !p.filename_str().unwrap().starts_with(".")
     }).unwrap();
 
-    render_files(&dest, pages, &templates);
-    render_files(&dest, posts, &templates);
+    debug!("Generating global mustache variables");
+    let mut extra_data = HashMap::new();
+    let mut post = HashMap::new();
+    post.insert("name".to_string(), Data::StrVal("wat".to_string()));
+    extra_data
+        .insert(
+            "pages".to_string(),
+            Data::VecVal({
+                let mut data_posts = Vec::new();
+                for post in posts.iter() {
+                    data_posts.push(Data::Map(post.get_data()));
+                }
+                data_posts
+            })
+        );
+    debug!("Extra data: {}", extra_data);
+
+    debug!("Rendering pages");
+    render_files(&dest, pages, &templates, &extra_data);
+    debug!("Rendering posts");
+    render_files(&dest, posts, &templates, &extra_data);
 }
 
-fn render_files(dest: &Path, pages: HashMap<Path, page::Page>, templates: &HashMap<String, mustache::Template>) {
-    for (key, page) in pages.iter() {
-        let new_dest = dest.join(key);
+fn render_files<'a>(dest: &Path, pages: HashMap<Path, page::Page>, templates: &HashMap<String, Template>, extra_data: &HashMap<String, Data<'a>>) {
+    for (key, page) in pages.into_iter() {
+        let new_dest = dest.join(&key);
         fs::mkdir_recursive(&new_dest.dir_path(), io::USER_RWX).is_ok();
         let template = match page.template() {
             Ok(v) => v.to_string(),
             Err(_) => {
-                println!("Missing template for page {}", key.display());
+                println!("Missing template for page {}", &key.display());
                 return;
             }
         };
@@ -144,10 +167,8 @@ fn render_files(dest: &Path, pages: HashMap<Path, page::Page>, templates: &HashM
             Some(template) => {
                 match File::open_mode(&new_dest, Open, ReadWrite) {
                     Ok(ref mut file) => {
-                        match page.render_to_file(template, file) {
-                            Ok(_) => println!("Generated {}", new_dest.display()),
-                            Err(e) => panic!("{}", e)
-                        }
+                        page.render_to_file(template, file, extra_data);
+                        debug!("Generated: {}", key.display());
                     },
                     Err(e) => panic!("{}", e)
                 }
