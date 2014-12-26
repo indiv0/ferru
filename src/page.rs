@@ -55,10 +55,18 @@ pub fn load_pages_from_disk(source: &Path, criteria: |&Path| -> bool) -> FerrumR
         if !path.is_file() { continue; }
         if !criteria(&path) { continue; }
 
-        let page = match load_from_disk(&path) {
-            Ok(v) => v,
-            Err(e) => {
-                warn!("Failed to read page {}: {}", path.display(), e);
+        // Read the page markdown from the disk.
+        let content = try!(File::open(&path).read_to_end());
+        let content = String::from_utf8_lossy(content.as_slice());
+        let page = match parser::page(content.as_slice()) {
+            Ok(page) => page,
+            Err(err) => {
+                let err = FerrumError {
+                    kind: ParserError(err),
+                    desc: "Failed to parse a string.",
+                    detail: None
+                };
+                warn!("Failed to read page {}: {}", path.display(), err);
                 continue;
             }
         };
@@ -69,20 +77,4 @@ pub fn load_pages_from_disk(source: &Path, criteria: |&Path| -> bool) -> FerrumR
     }
 
     Ok(pages)
-}
-
-pub fn load_from_disk(path: &Path) -> FerrumResult<Page> {
-    // Read the page markdown from the disk.
-    let content = try!(File::open(path).read_to_end());
-    let content = String::from_utf8_lossy(content.as_slice());
-    match parser::page(content.as_slice()) {
-        Ok(page) => Ok(page),
-        Err(err) => {
-            Err(FerrumError {
-                kind: ParserError(err),
-                desc: "Failed to parse a string.",
-                detail: None
-            })
-        }
-    }
 }
