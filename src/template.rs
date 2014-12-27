@@ -7,7 +7,7 @@ use error::FerrumResult;
 pub fn load_templates_from_disk(root_path: &Path, criteria: |&Path| -> bool) -> FerrumResult<HashMap<String, String>> {
     let mut templates = HashMap::new();
 
-    let templates_dir = try!(fs::readdir(&root_path.join("_templates")));
+    let templates_dir = try!(fs::readdir(root_path));
     for template_path in templates_dir.iter() {
         if !template_path.is_file() { continue; }
         if !criteria(template_path) { continue; }
@@ -20,6 +20,7 @@ pub fn load_templates_from_disk(root_path: &Path, criteria: |&Path| -> bool) -> 
             }
         };
         let filename = template_path.filename_str().unwrap().to_string();
+        debug!("Loaded template: {}", filename);
 
         templates.insert(filename, template);
     }

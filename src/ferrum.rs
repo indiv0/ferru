@@ -27,6 +27,7 @@ pub fn build(matches: Matches) {
         None => Path::new(DEFAULT_DEST_PATH)
     };
 
+    debug!("Cleaning destination directory");
     if !dest.exists() {
         println!("Destination directory \"{}\" does not exist, creating.", dest.display());
     } else {
@@ -36,7 +37,8 @@ pub fn build(matches: Matches) {
     fs::mkdir(&dest, io::USER_RWX).is_ok();
 
     // Load the templates.
-    let templates = match template::load_templates_from_disk(&source, |p| -> bool {
+    debug!("Loading templates");
+    let templates = match template::load_templates_from_disk(&source.join("_templates"), |p| -> bool {
         !p.filename_str().unwrap().starts_with(".") &&
         p.extension_str().unwrap() == "tpl"
     }) {
@@ -48,6 +50,7 @@ pub fn build(matches: Matches) {
     };
 
     // Copy all non-template and non-document content.
+    debug!("Copying static files");
     if source != dest {
         match util::copy_recursively(&source, &dest, |p| -> bool {
             !p.filename_str().unwrap().starts_with(".") &&
@@ -68,6 +71,6 @@ pub fn build(matches: Matches) {
     debug!("Rendering documents");
     for (key, document) in documents.into_iter() {
         let new_dest = dest.join(&key);
-        document.render_to_file(&new_dest, &templates).is_ok();
+        document.render_to_file(&new_dest, &templates).unwrap();
     }
 }
