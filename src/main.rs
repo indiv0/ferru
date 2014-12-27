@@ -8,7 +8,6 @@ extern crate getopts;
 #[phase(plugin, link)] extern crate log;
 extern crate mustache;
 #[phase(plugin)]extern crate peg_syntax_ext;
-extern crate rustdoc;
 
 use std::os;
 
