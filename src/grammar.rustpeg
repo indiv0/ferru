@@ -1,12 +1,12 @@
 use std::collections::HashMap;
 
-use page::Page;
+use document::Document;
 
 #[export]
-page -> Page
+document -> Document
     = header:header eol content:(.* { match_str })
     {
-        Page::new(header, content)
+        Document::new(header, content)
     }
 
 // TODO: Look into replacing the Strings with slices.

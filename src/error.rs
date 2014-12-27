@@ -16,8 +16,8 @@ pub enum ErrorKind {
     DecodingError(String),
     /// The configuration file is improperly formatted.
     InvalidConfigError,
-    /// A Page is improperly formatted.
-    InvalidPageError,
+    /// A Document is improperly formatted.
+    InvalidDocumentError,
     /// An IO error was encountered.
     IoError(io::IoError),
     /// A rust-mustache rendering error.
@@ -41,7 +41,7 @@ impl error::Error for FerrumError {
         match self.kind {
             ErrorKind::DecodingError(_) => "Error decoding file",
             ErrorKind::InvalidConfigError => "Invalid configuration file",
-            ErrorKind::InvalidPageError => "Improperly formatted Page",
+            ErrorKind::InvalidDocumentError => "Improperly formatted Document",
             ErrorKind::IoError(_) => "Encountered an I/O error",
             ErrorKind::MustacheError => "Encountered an rust-mustache error",
             ErrorKind::ParserError(_) => "Failed to parse a string",

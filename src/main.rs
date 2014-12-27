@@ -11,17 +11,14 @@ extern crate mustache;
 extern crate rustdoc;
 
 use getopts::{getopts, optopt, optflag, short_usage, usage, Matches};
-use std::collections::HashMap;
 use std::os;
 use std::io;
-use std::io::{fs, Open, ReadWrite};
-use std::io::fs::{File, PathExtensions};
-
-use mustache::{Data, Template};
+use std::io::fs;
+use std::io::fs::PathExtensions;
 
 mod error;
 mod parser;
-mod page;
+mod document;
 mod template;
 mod util;
 
@@ -107,12 +104,12 @@ fn build(matches: Matches) {
         }
     };
 
-    // Copy all non-template and non-page content.
+    // Copy all non-template and non-document content.
     if source != dest {
         match util::copy_recursively(&source, &dest, |p| -> bool {
             !p.filename_str().unwrap().starts_with(".") &&
             p != &dest &&
-            p.path_relative_from(&source).unwrap().as_str().unwrap() != "_pages" &&
+            p.path_relative_from(&source).unwrap().as_str().unwrap() != "_posts" &&
             p.path_relative_from(&source).unwrap().as_str().unwrap() != "_templates"
         }) {
             Err(e) => panic!("{}", e),
@@ -120,60 +117,14 @@ fn build(matches: Matches) {
         }
     }
 
-    debug!("Loading pages from disk");
-    let pages = page::load_pages_from_disk(&source.join("_pages"), |p| -> bool {
-        !p.filename_str().unwrap().starts_with(".")
-    }).unwrap();
-    debug!("Loading posts from disk");
-    let posts = page::load_pages_from_disk(&source.join("_posts"), |p| -> bool {
+    debug!("Loading documents from disk");
+    let documents = document::load_documents_from_disk(&source.join("_posts"), |p| -> bool {
         !p.filename_str().unwrap().starts_with(".")
     }).unwrap();
 
-    debug!("Generating global mustache variables");
-    let mut extra_data = HashMap::new();
-    let mut post = HashMap::new();
-    post.insert("name".to_string(), Data::StrVal("wat".to_string()));
-    extra_data
-        .insert(
-            "pages".to_string(),
-            Data::VecVal({
-                let mut data_posts = Vec::new();
-                for post in posts.iter() {
-                    data_posts.push(Data::Map(post.get_data()));
-                }
-                data_posts
-            })
-        );
-    debug!("Extra data: {}", extra_data);
-
-    debug!("Rendering pages");
-    render_files(&dest, pages, &templates, &extra_data);
-    debug!("Rendering posts");
-    render_files(&dest, posts, &templates, &extra_data);
-}
-
-fn render_files<'a>(dest: &Path, pages: HashMap<Path, page::Page>, templates: &HashMap<String, Template>, extra_data: &HashMap<String, Data<'a>>) {
-    for (key, page) in pages.into_iter() {
+    debug!("Rendering documents");
+    for (key, document) in documents.into_iter() {
         let new_dest = dest.join(&key);
-        fs::mkdir_recursive(&new_dest.dir_path(), io::USER_RWX).is_ok();
-        let template = match page.template() {
-            Ok(v) => v.to_string(),
-            Err(_) => {
-                println!("Missing template for page {}", &key.display());
-                return;
-            }
-        };
-        match templates.get(&template) {
-            Some(template) => {
-                match File::open_mode(&new_dest, Open, ReadWrite) {
-                    Ok(ref mut file) => {
-                        page.render_to_file(template, file, extra_data);
-                        debug!("Generated: {}", key.display());
-                    },
-                    Err(e) => panic!("{}", e)
-                }
-            },
-            None => panic!("Template \"{}\" not found.", template)
-        };
+        document.render_to_file(&new_dest, &templates).is_ok();
     }
 }
