@@ -10,6 +10,8 @@ name = "ferrum"
 path = "src/main.rs"
 
 [dependencies]
+getopts = "0.1.4"
+peg     = "*"
 
-peg           = "*"
-rust-mustache = "*"
+[dependencies.rust-mustache]
+git = "https://github.com/nickel-org/rust-mustache"

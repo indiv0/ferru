@@ -2,12 +2,12 @@
 //! Ferrum is a ...
 
 #![deny(non_camel_case_types)]
-#![feature(phase)]
+#![feature(plugin)]
 
 extern crate getopts;
-#[phase(plugin, link)] extern crate log;
+#[macro_use] extern crate log;
 extern crate mustache;
-#[phase(plugin)]extern crate peg_syntax_ext;
+#[plugin] extern crate peg_syntax_ext;
 
 use std::os;
 
@@ -37,12 +37,12 @@ fn main() {
     // Match the opts.
     let matches = match getopts(args.tail(), opts) {
         Ok(m) => { m }
-        Err(f) => { panic!(f.to_string()) }
+        Err(f) => { panic!(f) }
     };
 
     // Check if the help opt is present.
     if matches.opt_present("h") {
-        println!("{}", usage(program.as_slice(), opts));
+        println!("{}", usage(&*program, opts));
         return;
     }
 
@@ -54,7 +54,7 @@ fn main() {
         return;
     };
 
-    match command.as_slice() {
+    match &*command {
         "build" => ferrum::build(matches),
         _ => {
             println!("{}", short_usage(instructions, opts));

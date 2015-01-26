@@ -1,6 +1,7 @@
 use std::io;
 use std::io::fs;
 use std::io::fs::PathExtensions;
+use std::collections::HashMap;
 
 use getopts::Matches;
 
@@ -55,8 +56,8 @@ pub fn build(matches: Matches) {
         match util::copy_recursively(&source, &dest, |p| -> bool {
             !p.filename_str().unwrap().starts_with(".") &&
             p != &dest &&
-            p.path_relative_from(&source).unwrap().as_str().unwrap() != "_posts" &&
-            p.path_relative_from(&source).unwrap().as_str().unwrap() != "_templates"
+            !p.as_str().unwrap().contains("_posts") &&
+            !p.as_str().unwrap().contains("_templates")
         }) {
             Err(e) => panic!("{}", e),
             _ => {}
@@ -64,7 +65,7 @@ pub fn build(matches: Matches) {
     }
 
     debug!("Loading documents from disk");
-    let documents = document::load_documents_from_disk(&source.join("_posts"), |p| -> bool {
+    let documents: HashMap<Path, document::Document>  = document::load_documents_from_disk(&source.join("_posts"), |p| -> bool {
         !p.filename_str().unwrap().starts_with(".")
     }).unwrap();
 

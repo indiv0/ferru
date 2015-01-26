@@ -2,11 +2,11 @@ use std::collections::HashMap;
 use std::io;
 use std::io::{fs, File};
 use std::io::fs::PathExtensions;
+use std::path::BytesContainer;
 
 use mustache;
 
 use error::{FerrumError, FerrumResult};
-use error::ErrorKind::{InvalidDocumentError, ParserError};
 use parser;
 
 #[deriving(PartialEq, Show)]
@@ -24,21 +24,18 @@ impl Document {
         let template = mustache::compile_str(self.content.as_slice());
 
         // Write the template to memory, then retrieve it as a string.
-        let mut w = io::MemWriter::new();
+        let mut w = Vec::<u8>::new();
+        //let mut w = io::MemWriter::new();
         template.render(&mut w, &self.data).is_ok();
 
-        w.into_inner().into_ascii().into_string()
+        w.container_as_str().unwrap().to_string()
     }
 
     pub fn render_to_file(&self, file_path: &Path, templates: &HashMap<String, String>) -> FerrumResult<()> {
         let template_path = try!(self.template());
         let template = match templates.get(&template_path.to_string()) {
             Some(template) => template,
-            None => return Err(FerrumError {
-                kind: InvalidDocumentError,
-                desc: "Template not found",
-                detail: Some(format!("Template path: \"{}\"", template_path))
-            })
+            None => return Err(FerrumError::InvalidDocumentError("Template not found".to_string()))
         };
 
         fs::mkdir_recursive(&file_path.dir_path(), io::USER_RWX).is_ok();
@@ -63,17 +60,13 @@ impl Document {
     fn template(&self) -> FerrumResult<&str> {
         match self.data.get(&"template".to_string()) {
             Some(v) => Ok(v.as_slice()),
-            None => Err(FerrumError {
-                kind: InvalidDocumentError,
-                desc: "Missing template for document",
-                detail: None
-            })
+            None => Err(FerrumError::InvalidDocumentError("Missing template".to_string()))
         }
     }
 }
 
-pub fn load_documents_from_disk<F>(documents_path: &Path, criteria: F) -> FerrumResult<HashMap<Path, Document>>
-    where F : FnOnce(&Path) -> bool
+pub fn load_documents_from_disk<F>(documents_path: &Path, mut criteria: F) -> FerrumResult<HashMap<Path, Document>>
+    where F : FnMut(&Path) -> bool
 {
     let mut documents = HashMap::new();
 
@@ -88,12 +81,7 @@ pub fn load_documents_from_disk<F>(documents_path: &Path, criteria: F) -> Ferrum
         let document = match parser::document(content.as_slice()) {
             Ok(document) => document,
             Err(err) => {
-                let err = FerrumError {
-                    kind: ParserError(err),
-                    desc: "Failed to parse a string.",
-                    detail: None
-                };
-                warn!("Failed to read document {}: {}", path.display(), err);
+                warn!("Failed to read document {}: {}", path.display(), FerrumError::ParserError(err));
                 continue;
             }
         };
