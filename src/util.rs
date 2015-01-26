@@ -1,6 +1,8 @@
 use error::FerrumResult;
 
-pub fn copy_recursively(source: &Path, dest: &Path, criteria: |&Path| -> bool) -> FerrumResult<()> {
+pub fn copy_recursively<F>(source: &Path, dest: &Path, criteria: F) -> FerrumResult<()>
+    where F : FnOnce(&Path) -> bool
+{
     use std::io;
     use std::io::fs;
     use std::io::fs::PathExtensions;

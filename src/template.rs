@@ -4,7 +4,9 @@ use std::io::fs::PathExtensions;
 
 use error::FerrumResult;
 
-pub fn load_templates_from_disk(root_path: &Path, criteria: |&Path| -> bool) -> FerrumResult<HashMap<String, String>> {
+pub fn load_templates_from_disk<F>(root_path: &Path, criteria: F) -> FerrumResult<HashMap<String, String>>
+    where F : FnOnce(&Path) -> bool
+{
     let mut templates = HashMap::new();
 
     let templates_dir = try!(fs::readdir(root_path));

@@ -72,7 +72,9 @@ impl Document {
     }
 }
 
-pub fn load_documents_from_disk(documents_path: &Path, criteria: |&Path| -> bool) -> FerrumResult<HashMap<Path, Document>> {
+pub fn load_documents_from_disk<F>(documents_path: &Path, criteria: F) -> FerrumResult<HashMap<Path, Document>>
+    where F : FnOnce(&Path) -> bool
+{
     let mut documents = HashMap::new();
 
     let mut document_dirs = try!(fs::walk_dir(documents_path));
