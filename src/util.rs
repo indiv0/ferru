@@ -3,12 +3,12 @@ use error::FerrumResult;
 pub fn copy_recursively<F>(source: &Path, dest: &Path, mut criteria: F) -> FerrumResult<()>
     where F : Fn(&Path) -> bool
 {
-    use std::io;
-    use std::io::fs;
-    use std::io::fs::PathExtensions;
+    use std::old_io;
+    use std::old_io::fs;
+    use std::old_io::fs::PathExtensions;
 
     if !source.is_dir() {
-        try!(Err(io::standard_error(io::InvalidInput)))
+        try!(Err(old_io::standard_error(old_io::InvalidInput)))
     }
 
     let mut contents = try!(fs::walk_dir(source));
@@ -20,7 +20,7 @@ pub fn copy_recursively<F>(source: &Path, dest: &Path, mut criteria: F) -> Ferru
         let new_dest = &dest.join(entry.path_relative_from(source).unwrap());
 
         if entry.is_dir() {
-            try!(fs::mkdir(new_dest, io::USER_RWX));
+            try!(fs::mkdir(new_dest, old_io::USER_RWX));
         } else {
             try!(fs::copy(&entry, new_dest));
         }

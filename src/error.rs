@@ -1,9 +1,9 @@
-use std::{fmt, io, result};
+use std::{fmt, old_io, result};
 use std::error::FromError;
 use std::fmt::Formatter;
 
 /// An enum of all error kinds.
-#[deriving(PartialEq, Eq, Clone, Show)]
+#[derive(PartialEq, Eq, Clone, Show)]
 pub enum FerrumError {
     /// Failed to decode a file.
     DecodingError(String),
@@ -12,7 +12,7 @@ pub enum FerrumError {
     /// A Document is improperly formatted.
     InvalidDocumentError(String),
     /// An IO error was encountered.
-    IoError(io::IoError),
+    IoError(old_io::IoError),
     /// A rust-mustache rendering error.
     MustacheError,
     /// Failed to parse a string with the parser.
@@ -22,8 +22,8 @@ pub enum FerrumError {
 /// Application generic result type.
 pub type FerrumResult<T> = ::std::result::Result<T, self::FerrumError>;
 
-impl FromError<io::IoError> for FerrumError {
-    fn from_error(e: io::IoError) -> FerrumError {
+impl FromError<old_io::IoError> for FerrumError {
+    fn from_error(e: old_io::IoError) -> FerrumError {
         FerrumError::IoError(e)
     }
 }

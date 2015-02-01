@@ -1,7 +1,7 @@
 use std::collections::HashMap;
-use std::io;
-use std::io::{fs, File};
-use std::io::fs::PathExtensions;
+use std::old_io;
+use std::old_io::{fs, File};
+use std::old_io::fs::PathExtensions;
 use std::path::BytesContainer;
 
 use mustache;
@@ -9,7 +9,7 @@ use mustache;
 use error::{FerrumError, FerrumResult};
 use parser;
 
-#[deriving(PartialEq, Show)]
+#[derive(PartialEq, Show)]
 pub struct Document {
     data: HashMap<String, String>,
     content: String,
@@ -25,7 +25,7 @@ impl Document {
 
         // Write the template to memory, then retrieve it as a string.
         let mut w = Vec::<u8>::new();
-        //let mut w = io::MemWriter::new();
+        //let mut w = old_io::MemWriter::new();
         template.render(&mut w, &self.data).is_ok();
 
         w.container_as_str().unwrap().to_string()
@@ -38,7 +38,7 @@ impl Document {
             None => return Err(FerrumError::InvalidDocumentError("Template not found".to_string()))
         };
 
-        fs::mkdir_recursive(&file_path.dir_path(), io::USER_RWX).is_ok();
+        fs::mkdir_recursive(&file_path.dir_path(), old_io::USER_RWX).is_ok();
 
         let mut file = File::create(file_path);
         let mut data = HashMap::new();

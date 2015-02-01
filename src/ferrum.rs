@@ -1,6 +1,6 @@
-use std::io;
-use std::io::fs;
-use std::io::fs::PathExtensions;
+use std::old_io;
+use std::old_io::fs;
+use std::old_io::fs::PathExtensions;
 use std::collections::HashMap;
 
 use getopts::Matches;
@@ -35,7 +35,7 @@ pub fn build(matches: Matches) {
         println!("Cleaning destination directory \"{}\".", dest.display());
         fs::rmdir_recursive(&dest).is_ok();
     }
-    fs::mkdir(&dest, io::USER_RWX).is_ok();
+    fs::mkdir(&dest, old_io::USER_RWX).is_ok();
 
     // Load the templates.
     debug!("Loading templates");
