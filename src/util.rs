@@ -1,6 +1,6 @@
 use error::FerrumResult;
 
-pub fn copy_recursively<F>(source: &Path, dest: &Path, mut criteria: F) -> FerrumResult<()>
+pub fn copy_recursively<F>(source: &Path, dest: &Path, criteria: F) -> FerrumResult<()>
     where F : Fn(&Path) -> bool
 {
     use std::old_io;
