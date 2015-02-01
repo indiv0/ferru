@@ -11,7 +11,8 @@ path = "src/main.rs"
 
 [dependencies]
 getopts = "*"
-peg     = "*"
+log = "*"
+peg = "*"
 
 [dependencies.rust-mustache]
 git = "https://github.com/nickel-org/rust-mustache"

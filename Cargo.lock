@@ -3,6 +3,7 @@ name = "ferrum"
 version = "0.0.1"
 dependencies = [
  "getopts 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "log 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "peg 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "rust-mustache 0.3.0 (git+https://github.com/nickel-org/rust-mustache)",
 ]
