@@ -10,7 +10,7 @@ name = "ferrum"
 path = "src/main.rs"
 
 [dependencies]
-getopts = "0.1.4"
+getopts = "*"
 peg     = "*"
 
 [dependencies.rust-mustache]
