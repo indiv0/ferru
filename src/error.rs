@@ -3,7 +3,7 @@ use std::error::FromError;
 use std::fmt::Formatter;
 
 /// An enum of all error kinds.
-#[derive(PartialEq, Eq, Clone, Show)]
+#[derive(PartialEq, Eq, Clone)]
 pub enum FerrumError {
     /// Failed to decode a file.
     DecodingError(String),
