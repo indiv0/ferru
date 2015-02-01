@@ -1,4 +1,4 @@
-use std::{fmt, old_io, result};
+use std::{ fmt, old_io };
 use std::error::FromError;
 use std::fmt::Formatter;
 
