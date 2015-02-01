@@ -21,7 +21,7 @@ impl Document {
     }
 
     pub fn as_html(&self) -> String {
-        let template = mustache::compile_str(self.content.as_slice());
+        let template = mustache::compile_str(&*self.content);
 
         // Write the template to memory, then retrieve it as a string.
         let mut w = Vec::<u8>::new();
@@ -46,10 +46,10 @@ impl Document {
         data.insert("content", self.as_html());
 
         for (key, value) in self.data.iter() {
-            data.insert(key.as_slice(), value.clone());
+            data.insert(&key[], value.clone());
         }
 
-        let template = mustache::compile_str(template.as_slice());
+        let template = mustache::compile_str(&template[]);
 
         template.render(&mut file, &data).is_ok();
 
@@ -59,7 +59,7 @@ impl Document {
 
     fn template(&self) -> FerrumResult<&str> {
         match self.data.get(&"template".to_string()) {
-            Some(v) => Ok(v.as_slice()),
+            Some(v) => Ok(&v[]),
             None => Err(FerrumError::InvalidDocumentError("Missing template".to_string()))
         }
     }
@@ -77,8 +77,8 @@ pub fn load_documents_from_disk<F>(documents_path: &Path, mut criteria: F) -> Fe
 
         // Read the document from the disk.
         let content = try!(File::open(&path).read_to_end());
-        let content = String::from_utf8_lossy(content.as_slice());
-        let document = match parser::document(content.as_slice()) {
+        let content = String::from_utf8_lossy(&*content);
+        let document = match parser::document(&*content) {
             Ok(document) => document,
             Err(err) => {
                 warn!("Failed to read document {}: {}", path.display(), FerrumError::ParserError(err));
