@@ -1,9 +1,3 @@
-#![feature(collections)]
-#![feature(core)]
-#![feature(io)]
-#![feature(os)]
-#![feature(path)]
-
 // TODO: write a description.
 //! Ferrum is a ...
 

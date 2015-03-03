@@ -1,8 +1,8 @@
 [package]
 
 name = "ferrum"
-version = "0.0.1"
-authors = []
+version = "0.0.2"
+authors = [ "Nikita Pekin <contact@nikitapek.in>" ]
 
 [[bin]]
 
@@ -11,8 +11,8 @@ path = "src/main.rs"
 
 [dependencies]
 getopts = "0.2.4"
-log = "*"
-peg = "*"
+log = "0.2.5"
+peg = "0.1.8"
 
 [dependencies.rust-mustache]
 git = "https://github.com/nickel-org/rust-mustache"
