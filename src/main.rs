@@ -2,7 +2,7 @@
 //! Ferrum is a ...
 
 #![deny(non_camel_case_types)]
-#![feature(collections, core, old_io, old_path, plugin)]
+#![feature(collections, core, old_io, old_path, os, plugin)]
 #![plugin(peg_syntax_ext)]
 
 extern crate getopts;
