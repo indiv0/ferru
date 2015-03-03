@@ -1,9 +1,10 @@
-use std::{fmt, io, result};
+use std::fmt;
+use std::old_io as io;
 use std::error::FromError;
 use std::fmt::Formatter;
 
 /// An enum of all error kinds.
-#[deriving(PartialEq, Eq, Clone, Show)]
+#[derive(PartialEq, Eq, Clone)]
 pub enum FerrumError {
     /// Failed to decode a file.
     DecodingError(String),

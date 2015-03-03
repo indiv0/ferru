@@ -1,17 +1,17 @@
 use error::FerrumResult;
 
-pub fn copy_recursively<F>(source: &Path, dest: &Path, mut criteria: F) -> FerrumResult<()>
+pub fn copy_recursively<F>(source: &Path, dest: &Path, criteria: F) -> FerrumResult<()>
     where F : Fn(&Path) -> bool
 {
-    use std::io;
-    use std::io::fs;
-    use std::io::fs::PathExtensions;
+    use std::old_io as io;
+    use std::old_io::fs;
+    use std::old_io::fs::PathExtensions;
 
     if !source.is_dir() {
         try!(Err(io::standard_error(io::InvalidInput)))
     }
 
-    let mut contents = try!(fs::walk_dir(source));
+    let contents = try!(fs::walk_dir(source));
     for entry in contents {
         debug!("ENTRY: {}", entry.display());
         if !criteria(&entry) { continue; }

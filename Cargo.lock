@@ -2,23 +2,41 @@
 name = "ferrum"
 version = "0.0.1"
 dependencies = [
- "getopts 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
- "peg 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "getopts 0.2.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "log 0.2.5 (registry+https://github.com/rust-lang/crates.io-index)",
+ "peg 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "rust-mustache 0.3.0 (git+https://github.com/nickel-org/rust-mustache)",
 ]
 
 [[package]]
 name = "getopts"
-version = "0.1.4"
+version = "0.2.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "log 0.2.5 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "log"
+version = "0.2.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "peg"
-version = "0.1.4"
+version = "0.1.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "rust-mustache"
 version = "0.3.0"
-source = "git+https://github.com/nickel-org/rust-mustache#06ef12d375a6c2479ae6a30b9c102cd4c4dd882b"
+source = "git+https://github.com/nickel-org/rust-mustache#1fec611e5878ad01546602ab650357d50f8a1f66"
+dependencies = [
+ "log 0.2.5 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rustc-serialize 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "rustc-serialize"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
 

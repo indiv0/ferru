@@ -1,15 +1,15 @@
 use std::collections::HashMap;
-use std::io;
-use std::io::{fs, File};
-use std::io::fs::PathExtensions;
-use std::path::BytesContainer;
+use std::old_io as io;
+use std::old_io::{fs, File};
+use std::old_io::fs::PathExtensions;
+use std::old_path::BytesContainer;
 
 use mustache;
 
 use error::{FerrumError, FerrumResult};
 use parser;
 
-#[deriving(PartialEq, Show)]
+#[derive(PartialEq, Debug)]
 pub struct Document {
     data: HashMap<String, String>,
     content: String,
@@ -21,7 +21,7 @@ impl Document {
     }
 
     pub fn as_html(&self) -> String {
-        let template = mustache::compile_str(self.content.as_slice());
+        let template = mustache::compile_str(&self.content);
 
         // Write the template to memory, then retrieve it as a string.
         let mut w = Vec::<u8>::new();
@@ -46,10 +46,10 @@ impl Document {
         data.insert("content", self.as_html());
 
         for (key, value) in self.data.iter() {
-            data.insert(key.as_slice(), value.clone());
+            data.insert(&key, value.clone());
         }
 
-        let template = mustache::compile_str(template.as_slice());
+        let template = mustache::compile_str(&template);
 
         template.render(&mut file, &data).is_ok();
 
@@ -59,7 +59,7 @@ impl Document {
 
     fn template(&self) -> FerrumResult<&str> {
         match self.data.get(&"template".to_string()) {
-            Some(v) => Ok(v.as_slice()),
+            Some(v) => Ok(&v),
             None => Err(FerrumError::InvalidDocumentError("Missing template".to_string()))
         }
     }
@@ -70,15 +70,15 @@ pub fn load_documents_from_disk<F>(documents_path: &Path, mut criteria: F) -> Fe
 {
     let mut documents = HashMap::new();
 
-    let mut document_dirs = try!(fs::walk_dir(documents_path));
+    let document_dirs = try!(fs::walk_dir(documents_path));
     for path in document_dirs {
         if !path.is_file() { continue; }
         if !criteria(&path) { continue; }
 
         // Read the document from the disk.
         let content = try!(File::open(&path).read_to_end());
-        let content = String::from_utf8_lossy(content.as_slice());
-        let document = match parser::document(content.as_slice()) {
+        let content = String::from_utf8_lossy(&content);
+        let document = match parser::document(&content) {
             Ok(document) => document,
             Err(err) => {
                 warn!("Failed to read document {}: {}", path.display(), FerrumError::ParserError(err));

@@ -1,6 +1,6 @@
-use std::io;
-use std::io::fs;
-use std::io::fs::PathExtensions;
+use std::old_io as io;
+use std::old_io::fs;
+use std::old_io::fs::PathExtensions;
 use std::collections::HashMap;
 
 use getopts::Matches;

@@ -1,6 +1,6 @@
 use std::collections::HashMap;
-use std::io::{fs, File};
-use std::io::fs::PathExtensions;
+use std::old_io::{fs, File};
+use std::old_io::fs::PathExtensions;
 
 use error::FerrumResult;
 
