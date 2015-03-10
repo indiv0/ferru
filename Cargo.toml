@@ -12,7 +12,7 @@ path = "src/main.rs"
 [dependencies]
 getopts = "0.2.4"
 log = "0.2.5"
-peg = "0.1.8"
+peg = "0.1.9"
 
 [dependencies.rust-mustache]
 git = "https://github.com/nickel-org/rust-mustache"
