@@ -1,7 +1,6 @@
-use std::old_io as io;
-use std::old_io::fs;
-use std::old_io::fs::PathExtensions;
+use std::fs;
 use std::collections::HashMap;
+use std::path::{Path, PathBuf};
 
 use getopts::Matches;
 
@@ -14,34 +13,48 @@ static DEFAULT_DEST_PATH: &'static str = "./_site/";
 
 pub fn build(matches: Matches) {
     // Get the source path opt.
-    let source = match matches.opt_str("s") {
-        Some(v) => Path::new(v),
-        None => Path::new(DEFAULT_SOURCE_PATH)
-    };
+    let source = matches.opt_str("s")
+        .or(Some(DEFAULT_SOURCE_PATH.to_owned()))
+        .as_ref()
+        .map(Path::new)
+        .map(Path::to_path_buf)
+        .unwrap();
     if !source.exists() {
         panic!("Source directory \"{}\" does not exist.", source.display());
     }
 
     // Get the destination path opt.
-    let dest = match matches.opt_str("d") {
-        Some(v) => Path::new(v),
-        None => Path::new(DEFAULT_DEST_PATH)
-    };
+    let dest = matches.opt_str("d")
+        .or(Some(DEFAULT_DEST_PATH.to_owned()))
+        .as_ref()
+        .map(Path::new)
+        .map(Path::to_path_buf)
+        .unwrap();
 
     debug!("Cleaning destination directory");
     if !dest.exists() {
         println!("Destination directory \"{}\" does not exist, creating.", dest.display());
     } else {
         println!("Cleaning destination directory \"{}\".", dest.display());
-        fs::rmdir_recursive(&dest).is_ok();
+        fs::remove_dir_all(&dest).is_ok();
     }
-    fs::mkdir(&dest, io::USER_RWX).is_ok();
+    fs::create_dir(&dest).is_ok();
+
+    // A closure which determines whether or not the provided path is a UNIX
+    // hidden file (i.e. if it starts with a `.` character).
+    fn is_hidden_file<P>(path: &P) -> bool
+        where P: AsRef<Path>,
+    {
+        let res = util::file_name_from_path(&path).unwrap().starts_with(".");
+        debug!("Is path {:?} a hidden file? {:?}", path.as_ref(), res);
+        res
+    }
 
     // Load the templates.
     debug!("Loading templates");
-    let templates = match template::load_templates_from_disk(&source.join("_templates"), |p| -> bool {
-        !p.filename_str().unwrap().starts_with(".") &&
-        p.extension_str().unwrap() == "tpl"
+    let templates = match template::load_templates_from_disk(&source.join("_templates"), |path| -> bool {
+        !is_hidden_file(&path) &&
+        path.extension().unwrap() == "tpl"
     }) {
         Ok(v) => v,
         Err(e) => {
@@ -53,21 +66,29 @@ pub fn build(matches: Matches) {
     // Copy all non-template and non-document content.
     debug!("Copying static files");
     if source != dest {
-        match util::copy_recursively(&source, &dest, |p| -> bool {
-            !p.filename_str().unwrap().starts_with(".") &&
-            p != &dest &&
-            !p.as_str().unwrap().contains("_posts") &&
-            !p.as_str().unwrap().contains("_templates")
-        }) {
+        let is_static_file = |path: &Path| {
+            let res = !is_hidden_file(&path) &&
+            path != dest &&
+            !path.to_str().unwrap().contains("_posts") &&
+            !path.to_str().unwrap().contains("_templates");
+            debug!("Is path {:?} a static file? {:?}", path, res);
+            res
+        };
+
+        match util::copy_recursively(&source, &dest, is_static_file) {
             Err(e) => panic!("{}", e),
             _ => {}
         }
     }
 
     debug!("Loading documents from disk");
-    let documents: HashMap<Path, document::Document>  = document::load_documents_from_disk(&source.join("_posts"), |p| -> bool {
-        !p.filename_str().unwrap().starts_with(".")
-    }).unwrap();
+    let documents: HashMap<PathBuf, document::Document> = match document::load_documents_from_disk(&source.join("_posts"), |path| -> bool {
+        path.is_file() &&
+        !is_hidden_file(&path)
+    }) {
+        Ok(document) => document,
+        Err(err) => panic!("{}", err),
+    };
 
     debug!("Rendering documents");
     for (key, document) in documents.into_iter() {

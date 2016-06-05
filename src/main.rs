@@ -2,14 +2,14 @@
 //! Ferrum is a ...
 
 #![deny(non_camel_case_types)]
-#![feature(collections, core, old_io, old_path, os, plugin)]
-#![plugin(peg_syntax_ext)]
 
+extern crate env_logger;
 extern crate getopts;
-#[macro_use] extern crate log;
+#[macro_use]
+extern crate log;
 extern crate mustache;
 
-use std::os;
+use std::env;
 
 use getopts::Options;
 
@@ -21,6 +21,8 @@ mod template;
 mod util;
 
 fn main() {
+    env_logger::init().unwrap();
+
     // Setup the possible opts.
     let mut opts = Options::new();
     opts.optopt("s", "source", "set source directory", "NAME");
@@ -28,11 +30,11 @@ fn main() {
     opts.optflag("h", "help", "print this help menu");
 
     // Get the arguments and program name.
-    let args: Vec<String> = os::args();
+    let args: Vec<String> = env::args().collect();
     let program = args[0].clone();
 
     // Match the opts.
-    let matches = match opts.parse(args.tail()) {
+    let matches = match opts.parse(&args[1..]) {
         Ok(m) => { m }
         Err(f) => { panic!(f.to_string()) }
     };

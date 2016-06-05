@@ -1,30 +1,71 @@
-use error::FerrumResult;
+use std::fs;
+use std::io::{
+    Error as IoError,
+    ErrorKind,
+};
+use std::path::Path;
+
+use error::{FerrumError, FerrumResult};
 
 pub fn copy_recursively<F>(source: &Path, dest: &Path, criteria: F) -> FerrumResult<()>
     where F : Fn(&Path) -> bool
 {
-    use std::old_io as io;
-    use std::old_io::fs;
-    use std::old_io::fs::PathExtensions;
-
     if !source.is_dir() {
-        try!(Err(io::standard_error(io::InvalidInput)))
+        debug!("Source path {:?} is not a directory.", source);
+        try!(Err(IoError::new(ErrorKind::InvalidInput, "Invalid input")))
     }
 
-    let contents = try!(fs::walk_dir(source));
-    for entry in contents {
-        debug!("ENTRY: {}", entry.display());
-        if !criteria(&entry) { continue; }
+    debug!("Copying directory {:?} to {:?} recursively.", source, dest);
+    try!(walk_dir(
+        source,
+        &mut |entry| {
+            debug!("Entry: {:?}", entry);
+            if !criteria(entry) {
+                return Ok(());
+            }
 
-        // TODO: remove this unwrap.
-        let new_dest = &dest.join(entry.path_relative_from(source).unwrap());
+            debug!("Stripped path: {:?}", entry.strip_prefix(source));
+            let new_dest = &dest.join(entry.strip_prefix(source).unwrap());
 
-        if entry.is_dir() {
-            try!(fs::mkdir(new_dest, io::USER_RWX));
-        } else {
-            try!(fs::copy(&entry, new_dest));
+            if entry.is_dir() {
+                debug!("Creating directory: {:?}", new_dest);
+                try!(fs::create_dir(new_dest));
+            } else {
+                debug!("Copying file: {:?} to directory: {:?}", entry, new_dest);
+                try!(fs::copy(&entry, new_dest));
+            }
+
+            Ok(())
+        },
+    ));
+
+    Ok(())
+}
+
+pub fn walk_dir<F, P>(path: P, action: &mut F) -> FerrumResult<()>
+    where F: FnMut(&Path) -> FerrumResult<()>,
+          P: AsRef<Path>,
+{
+    debug!("Walking directory for path: {:?}", path.as_ref());
+    for entry in try!(fs::read_dir(path)) {
+        let entry = try!(entry);
+
+        try!(action(&entry.path()));
+
+        if try!(fs::metadata(&entry.path())).is_dir() {
+            try!(walk_dir(
+                &entry.path(),
+                action,
+            ));
         }
     }
 
     Ok(())
+}
+
+pub fn file_name_from_path<P>(path: &P) -> FerrumResult<&str>
+    where P: AsRef<Path>,
+{
+    try!(path.as_ref().file_name().ok_or(FerrumError::MissingFileName))
+        .to_str().ok_or(FerrumError::InvalidUtf8)
 }
