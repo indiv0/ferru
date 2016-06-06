@@ -6,7 +6,7 @@ use std::path::{Path, PathBuf};
 use getopts::Matches;
 
 use document;
-use error::FerrumResult;
+use error::{FerrumError, FerrumResult};
 use template;
 use util;
 
@@ -21,7 +21,7 @@ pub fn build(matches: Matches) -> FerrumResult<()> {
         .map(Path::to_path_buf)
         .unwrap_or(PathBuf::from(DEFAULT_SOURCE_PATH));
     if !source.exists() {
-        panic!("Source directory \"{}\" does not exist.", source.display());
+        return Err(FerrumError::path_not_found(&source))
     }
 
     // Get the destination path opt.

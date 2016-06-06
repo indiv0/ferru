@@ -1,18 +1,15 @@
+use std::fmt;
 use std::fs;
-use std::io::{
-    Error as IoError,
-    ErrorKind,
-};
 use std::path::Path;
 
 use error::{FerrumError, FerrumResult};
 
-pub fn copy_recursively<F>(source: &Path, dest: &Path, criteria: F) -> FerrumResult<()>
-    where F : Fn(&Path) -> bool
+pub fn copy_recursively<F, P>(source: &P, dest: &P, criteria: F) -> FerrumResult<()>
+    where F: Fn(&Path) -> bool,
+          P: AsRef<Path> + fmt::Debug,
 {
-    if !source.is_dir() {
-        debug!("Source path {:?} is not a directory.", source);
-        try!(Err(IoError::new(ErrorKind::InvalidInput, "Invalid input")))
+    if !source.as_ref().is_dir() {
+        return Err(FerrumError::path_is_not_a_directory(source))
     }
 
     debug!("Copying directory {:?} to {:?} recursively.", source, dest);
@@ -25,7 +22,7 @@ pub fn copy_recursively<F>(source: &Path, dest: &Path, criteria: F) -> FerrumRes
             }
 
             debug!("Stripped path: {:?}", entry.strip_prefix(source));
-            let new_dest = &dest.join(try!(entry.strip_prefix(source)));
+            let new_dest = &dest.as_ref().join(try!(entry.strip_prefix(source)));
 
             if entry.is_dir() {
                 debug!("Creating directory: {:?}", new_dest);

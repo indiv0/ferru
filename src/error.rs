@@ -1,6 +1,6 @@
 use std::fmt::{self, Formatter};
-use std::io;
-use std::path;
+use std::io::{self, ErrorKind};
+use std::path::{self, Path};
 use std::string;
 
 use parser;
@@ -34,6 +34,28 @@ impl FerrumError {
     /// Create an error for a missing template-specifying field in the header.
     pub fn missing_template_field() -> Self {
         FerrumError::InvalidDocumentError("missing template field in header".to_owned())
+    }
+
+    /// Create an error for a non-directory path which was expected to be as
+    /// directory.
+    pub fn path_is_not_a_directory<P>(path: &P) -> Self
+        where P: AsRef<Path> + fmt::Debug,
+    {
+        FerrumError::IoError(io::Error::new(ErrorKind::InvalidInput, format!(
+                    "specified path is not a directory: {}",
+                    path.as_ref().display(),
+                )))
+    }
+
+    /// Create an error for a path which unexpectedly points at a non-existing
+    /// entity.
+    pub fn path_not_found<P>(path: &P) -> Self
+        where P: AsRef<Path> + fmt::Debug,
+    {
+        FerrumError::IoError(io::Error::new(ErrorKind::NotFound, format!(
+                    "specified path not found: {}",
+                    path.as_ref().display(),
+                )))
     }
 }
 
