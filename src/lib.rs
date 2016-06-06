@@ -25,16 +25,17 @@
 //! Ferrum can also copy static files over to the directory of the generated
 //! website.
 
-extern crate clap;
 #[macro_use]
 extern crate log;
 extern crate mustache;
 
+pub use config::Config;
 pub use document::{load_documents_from_disk, Header, Document};
 pub use error::{Error, Result};
 pub use ferrum::build;
 pub use template::{load_templates_from_disk, TemplateMap};
 
+pub mod config;
 mod error;
 mod ferrum;
 mod parser;

@@ -26,6 +26,7 @@ extern crate log;
 extern crate mustache;
 
 use clap::{App, ArgMatches};
+use ferrum::Config;
 
 fn main() {
     env_logger::init()
@@ -42,9 +43,17 @@ fn main() {
 fn run(m: ArgMatches) {
     // Match the raw subcommand, and get its sub-matches "m".
     if let (name, Some(sub_m)) = m.subcommand() {
+        let config = config_from_matches(sub_m);
         match name {
-            "build" => ferrum::build(sub_m).unwrap(),
+            "build" => ferrum::build(&config).unwrap(),
             _ => unreachable!(),
         }
+    }
+}
+
+fn config_from_matches<'a>(matches: &'a ArgMatches) -> Config<'a> {
+    Config {
+        source_directory: matches.value_of("source"),
+        dest_directory: matches.value_of("dest"),
     }
 }

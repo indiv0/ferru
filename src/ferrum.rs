@@ -12,8 +12,7 @@ use std::collections::HashMap;
 use std::ffi::OsStr;
 use std::path::{Path, PathBuf};
 
-use clap::ArgMatches;
-
+use config::Config;
 use document;
 use error::{Error, Result};
 use template;
@@ -22,13 +21,12 @@ use util;
 /// Reads all relevant files in the specified source directory, uses them to
 /// generate a static website, and stores the resulting files in the specified
 /// destination directory.
-pub fn build(matches: &ArgMatches) -> Result<()> {
+pub fn build(config: &Config) -> Result<()> {
     const DEFAULT_SOURCE_PATH: &'static str = "./";
     const DEFAULT_DEST_PATH: &'static str = "./_site/";
 
     // Get the source path opt.
-    let source = matches.value_of("source")
-        .as_ref()
+    let source = config.source_directory.as_ref()
         .map(Path::new)
         .map_or_else(|| PathBuf::from(DEFAULT_SOURCE_PATH), Path::to_path_buf);
     if !source.exists() {
@@ -36,8 +34,7 @@ pub fn build(matches: &ArgMatches) -> Result<()> {
     }
 
     // Get the destination path opt.
-    let dest = matches.value_of("dest")
-        .as_ref()
+    let dest = config.dest_directory.as_ref()
         .map(Path::new)
         .map_or_else(|| PathBuf::from(DEFAULT_DEST_PATH), Path::to_path_buf);
 
