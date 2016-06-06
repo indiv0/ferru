@@ -3,6 +3,7 @@ use std::fmt;
 use std::io::{self, ErrorKind};
 use std::path::{self, Path};
 use std::string;
+use mustache;
 
 use parser;
 
@@ -24,6 +25,8 @@ pub enum Error {
     /// An error for when the template field is expected but not specified in a
     /// document header.
     MissingTemplateField,
+    /// Wraps errors emitted by methods during mustache templating.
+    MustacheError(mustache::Error),
     /// Wraps errors emitted by methods when attempting to parse a document.
     ParserError(parser::Error),
     /// Wraps errors emitted by the `Path::strip_prefix` method.
@@ -33,6 +36,17 @@ pub enum Error {
 }
 
 impl Error {
+    /// Create an error for when the parent of a path cannot be obtained (e.g.
+    /// if the path terminates in a root or prefix).
+    pub fn missing_parent_path<P>(path: &P) -> Self
+        where P: AsRef<Path> + fmt::Debug,
+    {
+        Error::IoError(io::Error::new(ErrorKind::InvalidInput, format!(
+                    "unable to get parent of path: {}",
+                    path.as_ref().display(),
+                )))
+    }
+
     /// Create an error for a non-directory path which was expected to be as
     /// directory.
     pub fn path_is_not_a_directory<P>(path: &P) -> Self
@@ -60,6 +74,7 @@ impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             &Error::IoError(ref e) => e.fmt(f),
+            &Error::MustacheError(ref e) => e.fmt(f),
             &Error::ParserError(ref e) => e.fmt(f),
             &Error::StripPrefixError(ref e) => e.fmt(f),
             e => write!(f, "{}", e.description()),
@@ -74,6 +89,7 @@ impl StdError for Error {
             Error::IoError(ref e) => e.description(),
             Error::MissingFileName => "a path is missing a file name",
             Error::MissingTemplateField => "missing template field in header",
+            Error::MustacheError(ref e) => e.description(),
             Error::ParserError(ref e) => e.description(),
             Error::StripPrefixError(ref e) => e.description(),
             Error::TemplateNotFound => "specified template could not be found",
@@ -83,6 +99,7 @@ impl StdError for Error {
     fn cause(&self) -> Option<&StdError> {
         match *self {
             Error::IoError(ref e) => e.cause(),
+            Error::MustacheError(ref e) => e.cause(),
             Error::ParserError(ref e) => e.cause(),
             Error::StripPrefixError(ref e) => e.cause(),
             _ => None,
@@ -108,6 +125,12 @@ impl From<string::FromUtf8Error> for Error {
     }
 }
 
+impl From<mustache::Error> for Error {
+    fn from(error: mustache::Error) -> Error {
+        Error::MustacheError(error)
+    }
+}
+
 impl From<path::StripPrefixError> for Error {
     fn from(error: path::StripPrefixError) -> Error {
         Error::StripPrefixError(error)
@@ -122,19 +145,21 @@ impl PartialEq<Error> for Error {
             IoError,
             MissingFileName,
             MissingTemplateField,
+            MustacheError,
             ParserError,
             StripPrefixError,
             TemplateNotFound,
         };
 
         match (self, other) {
-            (&InvalidUtf8, &InvalidUtf8)                 => true,
-            (&IoError(_), &IoError(_))                   => true,
-            (&MissingFileName, &MissingFileName)         => true,
-            (&MissingTemplateField, &MissingFileName)    => true,
-            (&ParserError(ref a), &ParserError(ref b))   => a == b,
-            (&StripPrefixError(_), &StripPrefixError(_)) => true,
-            (&TemplateNotFound, &TemplateNotFound)       => true,
+            (&InvalidUtf8, &InvalidUtf8)               => true,
+            (&IoError(_), &IoError(_))                 => true,
+            (&MissingFileName, &MissingFileName)       => true,
+            (&MissingTemplateField, &MissingFileName)  => true,
+            (&MustacheError(_), &MustacheError(_))     => true,
+            (&ParserError(ref a), &ParserError(ref b)) => a == b,
+            (&StripPrefixError(ref a), &StripPrefixError(ref b)) => a == b,
+            (&TemplateNotFound, &TemplateNotFound) => true,
             _ => false,
         }
     }

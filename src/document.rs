@@ -25,7 +25,7 @@ impl Document {
 
         // Write the template to memory, then retrieve it as a string.
         let mut buf = Vec::<u8>::new();
-        template.render(&mut buf, &self.data).is_ok();
+        try!(template.render(&mut buf, &self.data));
 
         String::from_utf8(buf).map_err(Error::from)
     }
@@ -35,7 +35,8 @@ impl Document {
         let template = try!(templates.get(&template_path.to_string())
             .ok_or(Error::TemplateNotFound));
 
-        fs::create_dir_all(&file_path.parent().unwrap()).is_ok();
+        let parent_path = file_path.parent().ok_or(Error::missing_parent_path(&file_path));
+        try!(fs::create_dir_all(&try!(parent_path)));
 
         let mut file = try!(File::create(file_path));
         let mut data = HashMap::new();
@@ -48,7 +49,7 @@ impl Document {
 
         let template = mustache::compile_str(&template);
 
-        template.render(&mut file, &data).is_ok();
+        try!(template.render(&mut file, &data));
 
         info!("Created {}", file_path.display());
         Ok(())

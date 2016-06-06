@@ -36,9 +36,9 @@ pub fn build(matches: Matches) -> Result<()> {
         println!("Destination directory \"{}\" does not exist, creating.", dest.display());
     } else {
         println!("Cleaning destination directory \"{}\".", dest.display());
-        fs::remove_dir_all(&dest).is_ok();
+        try!(fs::remove_dir_all(&dest));
     }
-    fs::create_dir(&dest).is_ok();
+    try!(fs::create_dir(&dest));
 
     // Load the templates.
     debug!("Loading templates");
