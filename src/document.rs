@@ -33,7 +33,7 @@ impl Document {
     pub fn render_to_file(&self, file_path: &Path, templates: &HashMap<String, String>) -> Result<()> {
         let template_path = try!(self.template());
         let template = try!(templates.get(&template_path.to_string())
-            .ok_or(Error::missing_template()));
+            .ok_or(Error::TemplateNotFound));
 
         fs::create_dir_all(&file_path.parent().unwrap()).is_ok();
 
@@ -56,7 +56,7 @@ impl Document {
 
     fn template(&self) -> Result<&String> {
         self.data.get(&"template".to_string())
-            .ok_or(Error::missing_template_field())
+            .ok_or(Error::MissingTemplateField)
     }
 }
 

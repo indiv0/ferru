@@ -8,8 +8,6 @@ use parser;
 /// An enum of all error kinds.
 #[derive(Debug)]
 pub enum Error {
-    /// A Document is improperly formatted or missing fields.
-    InvalidDocumentError(String),
     /// An error for when a type cannot be parsed to a string because it
     /// contains invalid UTF-8.
     InvalidUtf8,
@@ -19,23 +17,18 @@ pub enum Error {
     /// name as the final component instead terminates in `.`, `..`, or solely
     /// of a root of prefix.
     MissingFileName,
+    /// An error for when the template field is expected but not specified in a
+    /// document header.
+    MissingTemplateField,
     /// Wraps errors emitted by methods when attempting to parse a document.
     ParserError(parser::Error),
     /// Wraps errors emitted by the `Path::strip_prefix` method.
     StripPrefixError(path::StripPrefixError),
+    /// An error which occurs when a specified template cannot be found.
+    TemplateNotFound,
 }
 
 impl Error {
-    /// Create an error for a missing template.
-    pub fn missing_template() -> Self {
-        Error::InvalidDocumentError("template not found".to_owned())
-    }
-
-    /// Create an error for a missing template-specifying field in the header.
-    pub fn missing_template_field() -> Self {
-        Error::InvalidDocumentError("missing template field in header".to_owned())
-    }
-
     /// Create an error for a non-directory path which was expected to be as
     /// directory.
     pub fn path_is_not_a_directory<P>(path: &P) -> Self
@@ -89,12 +82,13 @@ impl From<path::StripPrefixError> for Error {
 impl fmt::Display for Error {
     fn fmt(&self, formatter: &mut Formatter) -> fmt::Result {
         match *self {
-            Error::InvalidDocumentError(ref s) => s.fmt(formatter),
             Error::InvalidUtf8 => "a string is not valid UTF-8".fmt(formatter),
             Error::IoError(ref e) => e.fmt(formatter),
             Error::MissingFileName => "a path is missing a file name".fmt(formatter),
+            Error::MissingTemplateField => "missing template field in header".fmt(formatter),
             Error::ParserError(ref e) => e.fmt(formatter),
             Error::StripPrefixError(ref e) => e.fmt(formatter),
+            Error::TemplateNotFound => "specified template could not be found".fmt(formatter),
         }
     }
 }
@@ -103,21 +97,23 @@ impl fmt::Display for Error {
 impl PartialEq<Error> for Error {
     fn eq(&self, other: &Error) -> bool {
         use self::Error::{
-            InvalidDocumentError,
             InvalidUtf8,
             IoError,
             MissingFileName,
+            MissingTemplateField,
             ParserError,
             StripPrefixError,
+            TemplateNotFound,
         };
 
         match (self, other) {
-            (&InvalidDocumentError(ref a), &InvalidDocumentError(ref b)) => a == b,
             (&InvalidUtf8, &InvalidUtf8)                 => true,
             (&IoError(_), &IoError(_))                   => true,
             (&MissingFileName, &MissingFileName)         => true,
+            (&MissingTemplateField, &MissingFileName)    => true,
             (&ParserError(ref a), &ParserError(ref b))   => a == b,
             (&StripPrefixError(_), &StripPrefixError(_)) => true,
+            (&TemplateNotFound, &TemplateNotFound)       => true,
             _ => false,
         }
     }
