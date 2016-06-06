@@ -17,7 +17,7 @@ pub struct Document {
 
 impl Document {
     pub fn new(header: Header, content: &str) -> Document {
-        Document { data: header, content: content.to_string() }
+        Document { data: header, content: content.to_owned() }
     }
 
     pub fn as_html(&self) -> Result<String> {
@@ -32,7 +32,7 @@ impl Document {
 
     pub fn render_to_file(&self, file_path: &Path, templates: &HashMap<String, String>) -> Result<()> {
         let template_path = try!(self.template());
-        let template = try!(templates.get(&template_path.to_string())
+        let template = try!(templates.get(&template_path.to_owned())
             .ok_or(Error::TemplateNotFound));
 
         let parent_path = file_path.parent().ok_or(Error::missing_parent_path(&file_path));
@@ -56,7 +56,7 @@ impl Document {
     }
 
     fn template(&self) -> Result<&String> {
-        self.data.get(&"template".to_string())
+        self.data.get(&"template".to_owned())
             .ok_or(Error::MissingTemplateField)
     }
 }
