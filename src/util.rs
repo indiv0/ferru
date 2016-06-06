@@ -25,7 +25,7 @@ pub fn copy_recursively<F>(source: &Path, dest: &Path, criteria: F) -> FerrumRes
             }
 
             debug!("Stripped path: {:?}", entry.strip_prefix(source));
-            let new_dest = &dest.join(entry.strip_prefix(source).unwrap());
+            let new_dest = &dest.join(try!(entry.strip_prefix(source)));
 
             if entry.is_dir() {
                 debug!("Creating directory: {:?}", new_dest);

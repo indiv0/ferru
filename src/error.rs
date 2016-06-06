@@ -1,5 +1,6 @@
 use std::fmt::{self, Formatter};
 use std::io;
+use std::path;
 
 use parser;
 
@@ -19,6 +20,8 @@ pub enum FerrumError {
     MissingFileName,
     /// Wraps errors emitted by methods when attempting to parse a document.
     ParserError(parser::Error),
+    /// Wraps errors emitted by the `Path::strip_prefix` method.
+    StripPrefixError(path::StripPrefixError),
 }
 
 impl FerrumError {
@@ -48,6 +51,12 @@ impl From<parser::Error> for FerrumError {
     }
 }
 
+impl From<path::StripPrefixError> for FerrumError {
+    fn from(error: path::StripPrefixError) -> FerrumError {
+        FerrumError::StripPrefixError(error)
+    }
+}
+
 impl fmt::Display for FerrumError {
     fn fmt(&self, formatter: &mut Formatter) -> Result<(), fmt::Error> {
         match *self {
@@ -56,6 +65,7 @@ impl fmt::Display for FerrumError {
             FerrumError::IoError(ref e) => e.fmt(formatter),
             FerrumError::MissingFileName => "a path is missing a file name".fmt(formatter),
             FerrumError::ParserError(ref e) => e.fmt(formatter),
+            FerrumError::StripPrefixError(ref e) => e.fmt(formatter),
         }
     }
 }
@@ -69,14 +79,16 @@ impl PartialEq<FerrumError> for FerrumError {
             IoError,
             MissingFileName,
             ParserError,
+            StripPrefixError,
         };
 
         match (self, other) {
             (&InvalidDocumentError(ref a), &InvalidDocumentError(ref b)) => a == b,
-            (&InvalidUtf8, &InvalidUtf8)               => true,
-            (&IoError(_), &IoError(_))                 => true,
-            (&MissingFileName, &MissingFileName)       => true,
-            (&ParserError(ref a), &ParserError(ref b)) => a == b,
+            (&InvalidUtf8, &InvalidUtf8)                 => true,
+            (&IoError(_), &IoError(_))                   => true,
+            (&MissingFileName, &MissingFileName)         => true,
+            (&ParserError(ref a), &ParserError(ref b))   => a == b,
+            (&StripPrefixError(_), &StripPrefixError(_)) => true,
             _ => false,
         }
     }

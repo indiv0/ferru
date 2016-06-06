@@ -84,7 +84,7 @@ pub fn load_documents_from_disk<F>(documents_path: &Path, mut criteria: F) -> Fe
                 buf
             };
             let document = try!(parser::parse_document(&content));
-            let relative_path = path.strip_prefix(documents_path).unwrap();
+            let relative_path = try!(path.strip_prefix(documents_path));
 
             documents.insert(relative_path.with_extension("").to_path_buf(), document);
 
