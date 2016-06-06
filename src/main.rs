@@ -54,7 +54,7 @@ fn main() {
     };
 
     match &*command {
-        "build" => ferrum::build(matches),
+        "build" => ferrum::build(matches).unwrap(),
         _ => {
             print_usage(&program, opts);
             return;

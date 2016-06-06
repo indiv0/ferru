@@ -5,13 +5,14 @@ use std::path::{Path, PathBuf};
 use getopts::Matches;
 
 use document;
+use error::FerrumResult;
 use template;
 use util;
 
 static DEFAULT_SOURCE_PATH: &'static str = "./";
 static DEFAULT_DEST_PATH: &'static str = "./_site/";
 
-pub fn build(matches: Matches) {
+pub fn build(matches: Matches) -> FerrumResult<()> {
     // Get the source path opt.
     let source = matches.opt_str("s")
         .or(Some(DEFAULT_SOURCE_PATH.to_owned()))
@@ -59,7 +60,7 @@ pub fn build(matches: Matches) {
         Ok(v) => v,
         Err(e) => {
             println!("Failed to read templates: {}", e);
-            return;
+            return Err(e);
         }
     };
 
@@ -95,4 +96,6 @@ pub fn build(matches: Matches) {
         let new_dest = dest.join(&key);
         document.render_to_file(&new_dest, &templates).unwrap();
     }
+
+    Ok(())
 }
