@@ -7,7 +7,7 @@ use parser;
 
 /// An enum of all error kinds.
 #[derive(Debug)]
-pub enum FerrumError {
+pub enum Error {
     /// A Document is improperly formatted or missing fields.
     InvalidDocumentError(String),
     /// An error for when a type cannot be parsed to a string because it
@@ -25,15 +25,15 @@ pub enum FerrumError {
     StripPrefixError(path::StripPrefixError),
 }
 
-impl FerrumError {
+impl Error {
     /// Create an error for a missing template.
     pub fn missing_template() -> Self {
-        FerrumError::InvalidDocumentError("template not found".to_owned())
+        Error::InvalidDocumentError("template not found".to_owned())
     }
 
     /// Create an error for a missing template-specifying field in the header.
     pub fn missing_template_field() -> Self {
-        FerrumError::InvalidDocumentError("missing template field in header".to_owned())
+        Error::InvalidDocumentError("missing template field in header".to_owned())
     }
 
     /// Create an error for a non-directory path which was expected to be as
@@ -41,7 +41,7 @@ impl FerrumError {
     pub fn path_is_not_a_directory<P>(path: &P) -> Self
         where P: AsRef<Path> + fmt::Debug,
     {
-        FerrumError::IoError(io::Error::new(ErrorKind::InvalidInput, format!(
+        Error::IoError(io::Error::new(ErrorKind::InvalidInput, format!(
                     "specified path is not a directory: {}",
                     path.as_ref().display(),
                 )))
@@ -52,7 +52,7 @@ impl FerrumError {
     pub fn path_not_found<P>(path: &P) -> Self
         where P: AsRef<Path> + fmt::Debug,
     {
-        FerrumError::IoError(io::Error::new(ErrorKind::NotFound, format!(
+        Error::IoError(io::Error::new(ErrorKind::NotFound, format!(
                     "specified path not found: {}",
                     path.as_ref().display(),
                 )))
@@ -60,49 +60,49 @@ impl FerrumError {
 }
 
 /// Application generic result type.
-pub type FerrumResult<T> = ::std::result::Result<T, self::FerrumError>;
+pub type Result<T> = ::std::result::Result<T, self::Error>;
 
-impl From<io::Error> for FerrumError {
-    fn from(error: io::Error) -> FerrumError {
-        FerrumError::IoError(error)
+impl From<io::Error> for Error {
+    fn from(error: io::Error) -> Error {
+        Error::IoError(error)
     }
 }
 
-impl From<parser::Error> for FerrumError {
-    fn from(error: parser::Error) -> FerrumError {
-        FerrumError::ParserError(error)
+impl From<parser::Error> for Error {
+    fn from(error: parser::Error) -> Error {
+        Error::ParserError(error)
     }
 }
 
-impl From<string::FromUtf8Error> for FerrumError {
-    fn from(_error: string::FromUtf8Error) -> FerrumError {
-        FerrumError::InvalidUtf8
+impl From<string::FromUtf8Error> for Error {
+    fn from(_error: string::FromUtf8Error) -> Error {
+        Error::InvalidUtf8
     }
 }
 
-impl From<path::StripPrefixError> for FerrumError {
-    fn from(error: path::StripPrefixError) -> FerrumError {
-        FerrumError::StripPrefixError(error)
+impl From<path::StripPrefixError> for Error {
+    fn from(error: path::StripPrefixError) -> Error {
+        Error::StripPrefixError(error)
     }
 }
 
-impl fmt::Display for FerrumError {
-    fn fmt(&self, formatter: &mut Formatter) -> Result<(), fmt::Error> {
+impl fmt::Display for Error {
+    fn fmt(&self, formatter: &mut Formatter) -> fmt::Result {
         match *self {
-            FerrumError::InvalidDocumentError(ref s) => s.fmt(formatter),
-            FerrumError::InvalidUtf8 => "a string is not valid UTF-8".fmt(formatter),
-            FerrumError::IoError(ref e) => e.fmt(formatter),
-            FerrumError::MissingFileName => "a path is missing a file name".fmt(formatter),
-            FerrumError::ParserError(ref e) => e.fmt(formatter),
-            FerrumError::StripPrefixError(ref e) => e.fmt(formatter),
+            Error::InvalidDocumentError(ref s) => s.fmt(formatter),
+            Error::InvalidUtf8 => "a string is not valid UTF-8".fmt(formatter),
+            Error::IoError(ref e) => e.fmt(formatter),
+            Error::MissingFileName => "a path is missing a file name".fmt(formatter),
+            Error::ParserError(ref e) => e.fmt(formatter),
+            Error::StripPrefixError(ref e) => e.fmt(formatter),
         }
     }
 }
 
 // Implement `PartialEq` manually, since `std::io::Error` does not implement it.
-impl PartialEq<FerrumError> for FerrumError {
-    fn eq(&self, other: &FerrumError) -> bool {
-        use self::FerrumError::{
+impl PartialEq<Error> for Error {
+    fn eq(&self, other: &Error) -> bool {
+        use self::Error::{
             InvalidDocumentError,
             InvalidUtf8,
             IoError,

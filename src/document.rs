@@ -4,7 +4,7 @@ use std::path::{Path, PathBuf};
 
 use mustache;
 
-use error::{FerrumError, FerrumResult};
+use error::{Error, Result};
 use parser;
 
 pub type Header = HashMap<String, String>;
@@ -20,20 +20,20 @@ impl Document {
         Document { data: header, content: content.to_string() }
     }
 
-    pub fn as_html(&self) -> FerrumResult<String> {
+    pub fn as_html(&self) -> Result<String> {
         let template = mustache::compile_str(&self.content);
 
         // Write the template to memory, then retrieve it as a string.
         let mut buf = Vec::<u8>::new();
         template.render(&mut buf, &self.data).is_ok();
 
-        String::from_utf8(buf).map_err(FerrumError::from)
+        String::from_utf8(buf).map_err(Error::from)
     }
 
-    pub fn render_to_file(&self, file_path: &Path, templates: &HashMap<String, String>) -> FerrumResult<()> {
+    pub fn render_to_file(&self, file_path: &Path, templates: &HashMap<String, String>) -> Result<()> {
         let template_path = try!(self.template());
         let template = try!(templates.get(&template_path.to_string())
-            .ok_or(FerrumError::missing_template()));
+            .ok_or(Error::missing_template()));
 
         fs::create_dir_all(&file_path.parent().unwrap()).is_ok();
 
@@ -54,13 +54,13 @@ impl Document {
         Ok(())
     }
 
-    fn template(&self) -> FerrumResult<&String> {
+    fn template(&self) -> Result<&String> {
         self.data.get(&"template".to_string())
-            .ok_or(FerrumError::missing_template_field())
+            .ok_or(Error::missing_template_field())
     }
 }
 
-pub fn load_documents_from_disk<F>(documents_path: &Path, mut criteria: F) -> FerrumResult<HashMap<PathBuf, Document>>
+pub fn load_documents_from_disk<F>(documents_path: &Path, mut criteria: F) -> Result<HashMap<PathBuf, Document>>
     where F : FnMut(&Path) -> bool
 {
     use util;

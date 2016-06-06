@@ -3,10 +3,10 @@ use std::io::Read;
 use std::fs::{self, File};
 use std::path::Path;
 
-use error::FerrumResult;
+use error::Result;
 use util;
 
-pub fn load_templates_from_disk<F>(root_path: &Path, mut criteria: F) -> FerrumResult<HashMap<String, String>>
+pub fn load_templates_from_disk<F>(root_path: &Path, mut criteria: F) -> Result<HashMap<String, String>>
     where F : FnMut(&Path) -> bool
 {
     let mut templates = HashMap::new();

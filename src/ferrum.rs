@@ -6,14 +6,14 @@ use std::path::{Path, PathBuf};
 use getopts::Matches;
 
 use document;
-use error::{FerrumError, FerrumResult};
+use error::{Error, Result};
 use template;
 use util;
 
 static DEFAULT_SOURCE_PATH: &'static str = "./";
 static DEFAULT_DEST_PATH: &'static str = "./_site/";
 
-pub fn build(matches: Matches) -> FerrumResult<()> {
+pub fn build(matches: Matches) -> Result<()> {
     // Get the source path opt.
     let source = matches.opt_str("s")
         .as_ref()
@@ -21,7 +21,7 @@ pub fn build(matches: Matches) -> FerrumResult<()> {
         .map(Path::to_path_buf)
         .unwrap_or(PathBuf::from(DEFAULT_SOURCE_PATH));
     if !source.exists() {
-        return Err(FerrumError::path_not_found(&source))
+        return Err(Error::path_not_found(&source))
     }
 
     // Get the destination path opt.

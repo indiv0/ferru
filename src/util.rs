@@ -2,14 +2,14 @@ use std::fmt;
 use std::fs;
 use std::path::Path;
 
-use error::{FerrumError, FerrumResult};
+use error::{Error, Result};
 
-pub fn copy_recursively<F, P>(source: &P, dest: &P, criteria: F) -> FerrumResult<()>
+pub fn copy_recursively<F, P>(source: &P, dest: &P, criteria: F) -> Result<()>
     where F: Fn(&Path) -> bool,
           P: AsRef<Path> + fmt::Debug,
 {
     if !source.as_ref().is_dir() {
-        return Err(FerrumError::path_is_not_a_directory(source))
+        return Err(Error::path_is_not_a_directory(source))
     }
 
     debug!("Copying directory {:?} to {:?} recursively.", source, dest);
@@ -39,8 +39,8 @@ pub fn copy_recursively<F, P>(source: &P, dest: &P, criteria: F) -> FerrumResult
     Ok(())
 }
 
-pub fn walk_dir<F, P>(path: P, action: &mut F) -> FerrumResult<()>
-    where F: FnMut(&Path) -> FerrumResult<()>,
+pub fn walk_dir<F, P>(path: P, action: &mut F) -> Result<()>
+    where F: FnMut(&Path) -> Result<()>,
           P: AsRef<Path>,
 {
     debug!("Walking directory for path: {:?}", path.as_ref());
@@ -60,11 +60,11 @@ pub fn walk_dir<F, P>(path: P, action: &mut F) -> FerrumResult<()>
     Ok(())
 }
 
-pub fn file_name_from_path<P>(path: &P) -> FerrumResult<&str>
+pub fn file_name_from_path<P>(path: &P) -> Result<&str>
     where P: AsRef<Path>,
 {
-    try!(path.as_ref().file_name().ok_or(FerrumError::MissingFileName))
-        .to_str().ok_or(FerrumError::InvalidUtf8)
+    try!(path.as_ref().file_name().ok_or(Error::MissingFileName))
+        .to_str().ok_or(Error::InvalidUtf8)
 }
 
 /// Determines whether or not the provided path item is hidden (i.e. if it
