@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use std::ffi::OsStr;
 use std::path::{Path, PathBuf};
 
-use getopts::Matches;
+use clap::ArgMatches;
 
 use document;
 use error::{Error, Result};
@@ -13,9 +13,9 @@ use util;
 static DEFAULT_SOURCE_PATH: &'static str = "./";
 static DEFAULT_DEST_PATH: &'static str = "./_site/";
 
-pub fn build(matches: Matches) -> Result<()> {
+pub fn build(matches: &ArgMatches) -> Result<()> {
     // Get the source path opt.
-    let source = matches.opt_str("s")
+    let source = matches.value_of("source")
         .as_ref()
         .map(Path::new)
         .map_or_else(|| PathBuf::from(DEFAULT_SOURCE_PATH), Path::to_path_buf);
@@ -24,7 +24,7 @@ pub fn build(matches: Matches) -> Result<()> {
     }
 
     // Get the destination path opt.
-    let dest = matches.opt_str("d")
+    let dest = matches.value_of("dest")
         .as_ref()
         .map(Path::new)
         .map_or_else(|| PathBuf::from(DEFAULT_DEST_PATH), Path::to_path_buf);

@@ -11,10 +11,13 @@ path = "src/main.rs"
 
 [dependencies]
 env_logger = "0.3"
-getopts = "0.2"
 log = "0.3"
 mustache = "0.7"
 yaml-rust = "0.3"
+
+[dependencies.clap]
+features = ["color", "suggestions", "yaml"]
+version = "2"
 
 [dependencies.clippy]
 optional = true
@@ -23,6 +26,7 @@ version = "0.0"
 [features]
 nightly = []
 nightly-testing = [
+#    "clap/lints",
     "clippy",
     "nightly",
 ]

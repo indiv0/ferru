@@ -1,0 +1,31 @@
+# Copyright (c) 2016 Nikita Pekin and the ferrum contributors
+# See the README.md file at the top-level directory of this distribution.
+#
+# Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
+# http://www.apache.org/licenses/LICENSE-2.0> or the MIT license
+# <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
+# option. This file may not be copied, modified, or distributed
+# except according to those terms.
+name: Ferrum
+version: 0.1.0
+about: A lightweight, blazing fast static site generator
+author: Nikita Pekin<contact@nikitapek.in>
+
+settings:
+    - GlobalVersion
+    - SubcommandRequiredElseHelp
+
+subcommands:
+    - build:
+        about: builds a static website from the provided source files into a destination directory
+        args:
+            - source:
+                help: set source directory
+                required: true
+                short: s
+                takes_value: true
+            - destination:
+                help: set destination directory
+                required: true
+                short: d
+                takes_value: true
