@@ -17,13 +17,10 @@ pub fn parse_document(content: &str) -> Result<Document> {
     // contain just the document body if a header is present.
     let mut content = content;
 
-    // Initialize an empty `HashMap` to store the header attributes, if a
-    // header is present.
-    let mut header = HashMap::new();
-
     // If a header is defined in the file, fill the header hashmap with the
     // header attributes.
-    if content.contains(HEADER_SEPARATOR) {
+    // Otherwise, initialize an empty `HashMap`.
+    let header = if content.contains(HEADER_SEPARATOR) {
         // Split the suplied content string in two, at the location of the
         // `HEADER_SEPARATOR`.
         let mut content_split = content.splitn(2, HEADER_SEPARATOR);
@@ -33,8 +30,10 @@ pub fn parse_document(content: &str) -> Result<Document> {
         let header_string = content_split.next().unwrap_or("");
         content = content_split.next().unwrap_or("");
 
-        header = try!(parse_header(header_string));
-    }
+        try!(parse_header(header_string))
+    } else {
+        HashMap::new()
+    };
 
     Ok(Document::new(header, content))
 }
@@ -44,7 +43,7 @@ fn parse_header(s: &str) -> Result<Header> {
     let yaml = try!(YamlLoader::load_from_str(s));
     // If the resulting `Vec<Yaml>` enum is of length 0, then the header is
     // empty.
-    if yaml.len() == 0 {
+    if yaml.is_empty() {
         return Ok(HashMap::new())
     }
     // Convert the `Yaml` enum to a `BTreeMap<Yaml, Yaml>`.

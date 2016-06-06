@@ -152,14 +152,14 @@ impl PartialEq<Error> for Error {
         };
 
         match (self, other) {
-            (&InvalidUtf8, &InvalidUtf8)               => true,
-            (&IoError(_), &IoError(_))                 => true,
-            (&MissingFileName, &MissingFileName)       => true,
-            (&MissingTemplateField, &MissingFileName)  => true,
-            (&MustacheError(_), &MustacheError(_))     => true,
-            (&ParserError(ref a), &ParserError(ref b)) => a == b,
+            (&InvalidUtf8, &InvalidUtf8) |
+                (&IoError(_), &IoError(_)) |
+                (&MissingFileName, &MissingFileName) |
+                (&MissingTemplateField, &MissingFileName) |
+                (&MustacheError(_), &MustacheError(_)) |
+                (&TemplateNotFound, &TemplateNotFound) => true,
+            (&ParserError(ref a), &ParserError(ref b))           => a == b,
             (&StripPrefixError(ref a), &StripPrefixError(ref b)) => a == b,
-            (&TemplateNotFound, &TemplateNotFound) => true,
             _ => false,
         }
     }

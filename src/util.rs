@@ -73,6 +73,6 @@ pub fn is_hidden<P>(path: &P) -> bool
     where P: AsRef<Path>,
 {
     file_name_from_path(&path)
-        .map(|file_name| file_name.starts_with("."))
+        .map(|file_name| file_name.starts_with('.'))
         .unwrap_or(false)
 }

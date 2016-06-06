@@ -2,6 +2,8 @@
 //! Ferrum is a ...
 
 #![deny(non_camel_case_types)]
+#![cfg_attr(feature = "nightly", feature(plugin))]
+#![cfg_attr(feature = "clippy", plugin(clippy))]
 
 extern crate env_logger;
 extern crate getopts;

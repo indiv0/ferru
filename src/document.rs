@@ -36,7 +36,7 @@ impl Document {
         let template = try!(templates.get(&template_path.to_owned())
             .ok_or(Error::TemplateNotFound));
 
-        let parent_path = file_path.parent().ok_or(Error::missing_parent_path(&file_path));
+        let parent_path = file_path.parent().ok_or_else(|| Error::missing_parent_path(&file_path));
         try!(fs::create_dir_all(&try!(parent_path)));
 
         let mut file = try!(File::create(file_path));
@@ -44,11 +44,11 @@ impl Document {
 
         data.insert("content", try!(self.as_html()));
 
-        for (key, value) in self.data.iter() {
-            data.insert(&key, value.clone());
+        for (key, value) in &self.data {
+            data.insert(key, value.clone());
         }
 
-        let template = mustache::compile_str(&template);
+        let template = mustache::compile_str(template);
 
         try!(template.render(&mut file, &data));
 

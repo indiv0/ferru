@@ -18,8 +18,7 @@ pub fn build(matches: Matches) -> Result<()> {
     let source = matches.opt_str("s")
         .as_ref()
         .map(Path::new)
-        .map(Path::to_path_buf)
-        .unwrap_or(PathBuf::from(DEFAULT_SOURCE_PATH));
+        .map_or_else(|| PathBuf::from(DEFAULT_SOURCE_PATH), Path::to_path_buf);
     if !source.exists() {
         return Err(Error::path_not_found(&source))
     }
@@ -28,8 +27,7 @@ pub fn build(matches: Matches) -> Result<()> {
     let dest = matches.opt_str("d")
         .as_ref()
         .map(Path::new)
-        .map(Path::to_path_buf)
-        .unwrap_or(PathBuf::from(DEFAULT_DEST_PATH));
+        .map_or_else(|| PathBuf::from(DEFAULT_DEST_PATH), Path::to_path_buf);
 
     debug!("Cleaning destination directory");
     if !dest.exists() {
@@ -59,8 +57,8 @@ pub fn build(matches: Matches) -> Result<()> {
         let is_static_file = |path: &Path| {
             !util::is_hidden(&path) &&
             path != dest &&
-            !path.to_str().map(|path| path.contains("_posts")).unwrap_or(false) &&
-            !path.to_str().map(|path| path.contains("_templates")).unwrap_or(false)
+            !path.to_str().map_or(false, |path| path.contains("_posts")) &&
+            !path.to_str().map_or(false, |path| path.contains("_templates"))
         };
 
         try!(util::copy_recursively(&source, &dest, is_static_file))
