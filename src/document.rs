@@ -1,3 +1,17 @@
+// Copyright (c) 2016 Nikita Pekin and the ferrum contributors
+// See the README.md file at the top-level directory of this distribution.
+//
+// Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
+// http://www.apache.org/licenses/LICENSE-2.0> or the MIT license
+// <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
+// option. This file may not be copied, modified, or distributed
+// except according to those terms.
+
+//! Provides a representation of a Ferrum document.
+//!
+//! A Ferrum document consists of an optional header and a body, with the two
+//! separated with the separator `---\n`.
+
 use std::collections::HashMap;
 use std::fs::{self, File};
 use std::path::{Path, PathBuf};
@@ -8,8 +22,12 @@ use error::{Error, Result};
 use parser;
 use template::TemplateMap;
 
+/// A convenient alias type for the data contained in the header of a Ferrum
+/// document.
 pub type Header = HashMap<String, String>;
 
+/// A struct representation of a Ferrum document, consisting of a YAML header
+/// and a `String` body.
 #[derive(PartialEq, Debug)]
 pub struct Document {
     data: Header,
@@ -17,10 +35,13 @@ pub struct Document {
 }
 
 impl Document {
+    /// Creates a new document from the provided `Header` and content `&str`.
     pub fn new(header: Header, content: &str) -> Document {
         Document { data: header, content: content.to_owned() }
     }
 
+    /// Renders the document content to a `String`, using the header data as
+    /// the templating attributes.
     pub fn as_html(&self) -> Result<String> {
         let template = mustache::compile_str(&self.content);
 
@@ -31,6 +52,9 @@ impl Document {
         String::from_utf8(buf).map_err(Error::from)
     }
 
+    /// Renders the document to the desired file path, selecting the template
+    /// specified in the "template" header field as the header from the list of
+    /// provided templates.
     pub fn render_to_file(&self, file_path: &Path, templates: &TemplateMap) -> Result<()> {
         let template_path = try!(self.template());
         let template = try!(templates.get(&template_path.to_owned())
@@ -62,6 +86,8 @@ impl Document {
     }
 }
 
+/// Recursively traverses the specified directory and loads the all files
+/// matching the specified criteria as document files.
 pub fn load_documents_from_disk<F>(documents_path: &Path, mut criteria: F) -> Result<HashMap<PathBuf, Document>>
     where F : FnMut(&Path) -> bool
 {

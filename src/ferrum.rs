@@ -1,3 +1,12 @@
+// Copyright (c) 2016 Nikita Pekin and the ferrum contributors
+// See the README.md file at the top-level directory of this distribution.
+//
+// Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
+// http://www.apache.org/licenses/LICENSE-2.0> or the MIT license
+// <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
+// option. This file may not be copied, modified, or distributed
+// except according to those terms.
+
 use std::fs;
 use std::collections::HashMap;
 use std::ffi::OsStr;
@@ -10,10 +19,13 @@ use error::{Error, Result};
 use template;
 use util;
 
-static DEFAULT_SOURCE_PATH: &'static str = "./";
-static DEFAULT_DEST_PATH: &'static str = "./_site/";
-
+/// Reads all relevant files in the specified source directory, uses them to
+/// generate a static website, and stores the resulting files in the specified
+/// destination directory.
 pub fn build(matches: &ArgMatches) -> Result<()> {
+    const DEFAULT_SOURCE_PATH: &'static str = "./";
+    const DEFAULT_DEST_PATH: &'static str = "./_site/";
+
     // Get the source path opt.
     let source = matches.value_of("source")
         .as_ref()

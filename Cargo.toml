@@ -4,11 +4,6 @@ name = "ferrum"
 version = "0.0.2"
 authors = [ "Nikita Pekin <contact@nikitapek.in>" ]
 
-[[bin]]
-
-name = "ferrum"
-path = "src/main.rs"
-
 [dependencies]
 env_logger = "0.3"
 log = "0.3"
