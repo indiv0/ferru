@@ -6,6 +6,7 @@ use mustache;
 
 use error::{Error, Result};
 use parser;
+use template::TemplateMap;
 
 pub type Header = HashMap<String, String>;
 
@@ -30,7 +31,7 @@ impl Document {
         String::from_utf8(buf).map_err(Error::from)
     }
 
-    pub fn render_to_file(&self, file_path: &Path, templates: &HashMap<String, String>) -> Result<()> {
+    pub fn render_to_file(&self, file_path: &Path, templates: &TemplateMap) -> Result<()> {
         let template_path = try!(self.template());
         let template = try!(templates.get(&template_path.to_owned())
             .ok_or(Error::TemplateNotFound));

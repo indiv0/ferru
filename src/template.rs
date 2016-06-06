@@ -6,7 +6,10 @@ use std::path::Path;
 use error::Result;
 use util;
 
-pub fn load_templates_from_disk<F>(root_path: &Path, mut criteria: F) -> Result<HashMap<String, String>>
+/// A convenient alias type for the type used for storing templates.
+pub type TemplateMap = HashMap<String, String>;
+
+pub fn load_templates_from_disk<F>(root_path: &Path, mut criteria: F) -> Result<TemplateMap>
     where F : FnMut(&Path) -> bool
 {
     let mut templates = HashMap::new();
