@@ -6,6 +6,9 @@ use std::string;
 
 use parser;
 
+/// A convenient alias type for results when using Ferrum.
+pub type Result<T> = ::std::result::Result<T, self::Error>;
+
 /// An enum of all error kinds.
 #[derive(Debug)]
 pub enum Error {
@@ -86,9 +89,6 @@ impl StdError for Error {
         }
     }
 }
-
-/// Application generic result type.
-pub type Result<T> = ::std::result::Result<T, self::Error>;
 
 impl From<io::Error> for Error {
     fn from(error: io::Error) -> Error {
