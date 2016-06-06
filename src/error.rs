@@ -1,6 +1,7 @@
 use std::fmt::{self, Formatter};
 use std::io;
 use std::path;
+use std::string;
 
 use parser;
 
@@ -48,6 +49,12 @@ impl From<io::Error> for FerrumError {
 impl From<parser::Error> for FerrumError {
     fn from(error: parser::Error) -> FerrumError {
         FerrumError::ParserError(error)
+    }
+}
+
+impl From<string::FromUtf8Error> for FerrumError {
+    fn from(_error: string::FromUtf8Error) -> FerrumError {
+        FerrumError::InvalidUtf8
     }
 }
 

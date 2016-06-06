@@ -34,10 +34,8 @@ fn main() {
     let program = args[0].clone();
 
     // Match the opts.
-    let matches = match opts.parse(&args[1..]) {
-        Ok(m) => { m }
-        Err(f) => { panic!(f.to_string()) }
-    };
+    let matches = opts.parse(&args[1..])
+        .expect("Failed to parse args");
 
     // Check if the help opt is present.
     if matches.opt_present("h") {

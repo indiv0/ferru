@@ -69,3 +69,13 @@ pub fn file_name_from_path<P>(path: &P) -> FerrumResult<&str>
     try!(path.as_ref().file_name().ok_or(FerrumError::MissingFileName))
         .to_str().ok_or(FerrumError::InvalidUtf8)
 }
+
+/// Determines whether or not the provided path item is hidden (i.e. if it
+/// starts with a `.` character).
+pub fn is_hidden<P>(path: &P) -> bool
+    where P: AsRef<Path>,
+{
+    file_name_from_path(&path)
+        .map(|file_name| file_name.starts_with("."))
+        .unwrap_or(false)
+}

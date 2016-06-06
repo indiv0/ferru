@@ -20,14 +20,14 @@ impl Document {
         Document { data: header, content: content.to_string() }
     }
 
-    pub fn as_html(&self) -> String {
+    pub fn as_html(&self) -> FerrumResult<String> {
         let template = mustache::compile_str(&self.content);
 
         // Write the template to memory, then retrieve it as a string.
         let mut buf = Vec::<u8>::new();
         template.render(&mut buf, &self.data).is_ok();
 
-        String::from_utf8(buf).unwrap().to_string()
+        String::from_utf8(buf).map_err(FerrumError::from)
     }
 
     pub fn render_to_file(&self, file_path: &Path, templates: &HashMap<String, String>) -> FerrumResult<()> {
@@ -40,7 +40,7 @@ impl Document {
         let mut file = try!(File::create(file_path));
         let mut data = HashMap::new();
 
-        data.insert("content", self.as_html());
+        data.insert("content", try!(self.as_html()));
 
         for (key, value) in self.data.iter() {
             data.insert(&key, value.clone());

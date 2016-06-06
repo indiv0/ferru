@@ -1,5 +1,6 @@
 use std::fs;
 use std::collections::HashMap;
+use std::ffi::OsStr;
 use std::path::{Path, PathBuf};
 
 use getopts::Matches;
@@ -15,22 +16,20 @@ static DEFAULT_DEST_PATH: &'static str = "./_site/";
 pub fn build(matches: Matches) -> FerrumResult<()> {
     // Get the source path opt.
     let source = matches.opt_str("s")
-        .or(Some(DEFAULT_SOURCE_PATH.to_owned()))
         .as_ref()
         .map(Path::new)
         .map(Path::to_path_buf)
-        .unwrap();
+        .unwrap_or(PathBuf::from(DEFAULT_SOURCE_PATH));
     if !source.exists() {
         panic!("Source directory \"{}\" does not exist.", source.display());
     }
 
     // Get the destination path opt.
     let dest = matches.opt_str("d")
-        .or(Some(DEFAULT_DEST_PATH.to_owned()))
         .as_ref()
         .map(Path::new)
         .map(Path::to_path_buf)
-        .unwrap();
+        .unwrap_or(PathBuf::from(DEFAULT_DEST_PATH));
 
     debug!("Cleaning destination directory");
     if !dest.exists() {
@@ -41,21 +40,11 @@ pub fn build(matches: Matches) -> FerrumResult<()> {
     }
     fs::create_dir(&dest).is_ok();
 
-    // A closure which determines whether or not the provided path is a UNIX
-    // hidden file (i.e. if it starts with a `.` character).
-    fn is_hidden_file<P>(path: &P) -> bool
-        where P: AsRef<Path>,
-    {
-        let res = util::file_name_from_path(&path).unwrap().starts_with(".");
-        debug!("Is path {:?} a hidden file? {:?}", path.as_ref(), res);
-        res
-    }
-
     // Load the templates.
     debug!("Loading templates");
-    let templates = match template::load_templates_from_disk(&source.join("_templates"), |path| -> bool {
-        !is_hidden_file(&path) &&
-        path.extension().unwrap() == "tpl"
+    let templates = match template::load_templates_from_disk(&source.join("_templates"), |path| {
+        !util::is_hidden(&path) &&
+        path.extension().and_then(OsStr::to_str) == Some("tpl")
     }) {
         Ok(v) => v,
         Err(e) => {
@@ -68,33 +57,24 @@ pub fn build(matches: Matches) -> FerrumResult<()> {
     debug!("Copying static files");
     if source != dest {
         let is_static_file = |path: &Path| {
-            let res = !is_hidden_file(&path) &&
+            !util::is_hidden(&path) &&
             path != dest &&
-            !path.to_str().unwrap().contains("_posts") &&
-            !path.to_str().unwrap().contains("_templates");
-            debug!("Is path {:?} a static file? {:?}", path, res);
-            res
+            !path.to_str().map(|path| path.contains("_posts")).unwrap_or(false) &&
+            !path.to_str().map(|path| path.contains("_templates")).unwrap_or(false)
         };
 
-        match util::copy_recursively(&source, &dest, is_static_file) {
-            Err(e) => panic!("{}", e),
-            _ => {}
-        }
+        try!(util::copy_recursively(&source, &dest, is_static_file))
     }
 
     debug!("Loading documents from disk");
-    let documents: HashMap<PathBuf, document::Document> = match document::load_documents_from_disk(&source.join("_posts"), |path| -> bool {
-        path.is_file() &&
-        !is_hidden_file(&path)
-    }) {
-        Ok(document) => document,
-        Err(err) => panic!("{}", err),
-    };
+    let documents: HashMap<PathBuf, document::Document> = try!(document::load_documents_from_disk(&source.join("_posts"), |path| {
+        !util::is_hidden(&path)
+    }));
 
     debug!("Rendering documents");
     for (key, document) in documents.into_iter() {
         let new_dest = dest.join(&key);
-        document.render_to_file(&new_dest, &templates).unwrap();
+        try!(document.render_to_file(&new_dest, &templates));
     }
 
     Ok(())
