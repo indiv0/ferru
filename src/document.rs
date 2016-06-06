@@ -70,7 +70,7 @@ pub fn load_documents_from_disk<F>(documents_path: &Path, mut criteria: F) -> Fe
     try!(util::walk_dir(
         documents_path,
         &mut |path| {
-            if !criteria(&path) {
+            if !criteria(&path) || !path.is_file() {
                 return Ok(());
             }
 
