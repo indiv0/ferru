@@ -1,4 +1,5 @@
-use std::fmt::{self, Formatter};
+use std::error::Error as StdError;
+use std::fmt;
 use std::io::{self, ErrorKind};
 use std::path::{self, Path};
 use std::string;
@@ -52,6 +53,40 @@ impl Error {
     }
 }
 
+impl fmt::Display for Error {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            &Error::IoError(ref e) => e.fmt(f),
+            &Error::ParserError(ref e) => e.fmt(f),
+            &Error::StripPrefixError(ref e) => e.fmt(f),
+            e => write!(f, "{}", e.description()),
+        }
+    }
+}
+
+impl StdError for Error {
+    fn description(&self) -> &str {
+        match *self {
+            Error::InvalidUtf8 => "a string is not valid UTF-8",
+            Error::IoError(ref e) => e.description(),
+            Error::MissingFileName => "a path is missing a file name",
+            Error::MissingTemplateField => "missing template field in header",
+            Error::ParserError(ref e) => e.description(),
+            Error::StripPrefixError(ref e) => e.description(),
+            Error::TemplateNotFound => "specified template could not be found",
+        }
+    }
+
+    fn cause(&self) -> Option<&StdError> {
+        match *self {
+            Error::IoError(ref e) => e.cause(),
+            Error::ParserError(ref e) => e.cause(),
+            Error::StripPrefixError(ref e) => e.cause(),
+            _ => None,
+        }
+    }
+}
+
 /// Application generic result type.
 pub type Result<T> = ::std::result::Result<T, self::Error>;
 
@@ -76,20 +111,6 @@ impl From<string::FromUtf8Error> for Error {
 impl From<path::StripPrefixError> for Error {
     fn from(error: path::StripPrefixError) -> Error {
         Error::StripPrefixError(error)
-    }
-}
-
-impl fmt::Display for Error {
-    fn fmt(&self, formatter: &mut Formatter) -> fmt::Result {
-        match *self {
-            Error::InvalidUtf8 => "a string is not valid UTF-8".fmt(formatter),
-            Error::IoError(ref e) => e.fmt(formatter),
-            Error::MissingFileName => "a path is missing a file name".fmt(formatter),
-            Error::MissingTemplateField => "missing template field in header".fmt(formatter),
-            Error::ParserError(ref e) => e.fmt(formatter),
-            Error::StripPrefixError(ref e) => e.fmt(formatter),
-            Error::TemplateNotFound => "specified template could not be found".fmt(formatter),
-        }
     }
 }
 
