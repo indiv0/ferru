@@ -5,14 +5,14 @@ version = "0.0.2"
 authors = [ "Nikita Pekin <contact@nikitapek.in>" ]
 
 [dependencies]
-env_logger = "0.3"
-log = "0.3"
-mustache = "0.7"
-yaml-rust = "0.3"
+env_logger = "0.3.5"
+log = "0.3.6"
+mustache = "0.7.0"
+yaml-rust = "0.3.3"
 
 [dependencies.clap]
 features = ["color", "suggestions", "yaml"]
-version = "2"
+version = "2.14.0"
 
 [dependencies.clippy]
 optional = true
