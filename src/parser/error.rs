@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Nikita Pekin and the ferrum contributors
+// Copyright (c) 2016, 2018 Nikita Pekin and the ferru contributors
 // See the README.md file at the top-level directory of this distribution.
 //
 // Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
@@ -13,7 +13,7 @@ use std::result::Result as StdResult;
 
 use parser::yaml_rust::{self, Yaml};
 
-/// A convenient alias type for results when parsing the Ferrum document format.
+/// A convenient alias type for results when parsing the Ferru document format.
 pub type Result<T> = StdResult<T, Error>;
 
 /// An enum of all error kinds.

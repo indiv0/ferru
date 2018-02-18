@@ -1,6 +1,6 @@
 //! User-facing configuration.
 
-/// The configuration to be used when running the Ferrum "build" subcommand.
+/// The configuration to be used when running the Ferru "build" subcommand.
 #[derive(Clone, Debug)]
 pub struct Config<'a> {
     /// The directory to be used as the source for the website being generated.

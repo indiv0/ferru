@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Nikita Pekin and the ferrum contributors
+// Copyright (c) 2016, 2018 Nikita Pekin and the ferru contributors
 // See the README.md file at the top-level directory of this distribution.
 //
 // Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
@@ -16,7 +16,7 @@ use mustache;
 
 use parser;
 
-/// A convenient alias type for results when using Ferrum.
+/// A convenient alias type for results when using Ferru.
 pub type Result<T> = ::std::result::Result<T, self::Error>;
 
 /// An enum of all error kinds.

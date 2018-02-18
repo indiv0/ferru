@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Nikita Pekin and the ferrum contributors
+// Copyright (c) 2016, 2018 Nikita Pekin and the ferru contributors
 // See the README.md file at the top-level directory of this distribution.
 //
 // Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
@@ -7,10 +7,10 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-//! Ferrum is a lightweight, blazing fast static site generator.
+//! Ferru is a lightweight, blazing fast static site generator.
 //!
-//! This binary serves as a frontend to the Ferrum static site generation
-//! functionality provided by the ferrum library.
+//! This binary serves as a frontend to the Ferru static site generation
+//! functionality provided by the ferru library.
 
 #![deny(missing_docs)]
 #![deny(non_camel_case_types)]
@@ -20,13 +20,13 @@
 #[macro_use]
 extern crate clap;
 extern crate env_logger;
-extern crate ferrum;
+extern crate ferru;
 #[macro_use]
 extern crate log;
 extern crate mustache;
 
 use clap::{App, ArgMatches};
-use ferrum::Config;
+use ferru::Config;
 
 fn main() {
     env_logger::init()
@@ -45,7 +45,7 @@ fn run(m: ArgMatches) {
     if let (name, Some(sub_m)) = m.subcommand() {
         let config = config_from_matches(sub_m);
         match name {
-            "build" => ferrum::build(&config).unwrap(),
+            "build" => ferru::build(&config).unwrap(),
             _ => unreachable!(),
         }
     }

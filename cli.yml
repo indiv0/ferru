@@ -1,4 +1,4 @@
-# Copyright (c) 2016 Nikita Pekin and the ferrum contributors
+# Copyright (c) 2016, 2018 Nikita Pekin and the ferru contributors
 # See the README.md file at the top-level directory of this distribution.
 #
 # Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
@@ -6,8 +6,8 @@
 # <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 # option. This file may not be copied, modified, or distributed
 # except according to those terms.
-name: Ferrum
-version: 0.1.0
+name: Ferru
+version: 0.3.0
 about: A lightweight, blazing fast static site generator
 author: Nikita Pekin<contact@nikitapek.in>
 

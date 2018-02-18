@@ -119,8 +119,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "ferrum"
-version = "0.0.2"
+name = "ferru"
+version = "0.3.0"
 dependencies = [
  "clap 2.30.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "clippy 0.0.186 (registry+https://github.com/rust-lang/crates.io-index)",

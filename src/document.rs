@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Nikita Pekin and the ferrum contributors
+// Copyright (c) 2016, 2018 Nikita Pekin and the ferru contributors
 // See the README.md file at the top-level directory of this distribution.
 //
 // Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
@@ -7,9 +7,9 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-//! Provides a representation of a Ferrum document.
+//! Provides a representation of a Ferru document.
 //!
-//! A Ferrum document consists of an optional header and a body, with the two
+//! A Ferru document consists of an optional header and a body, with the two
 //! separated with the separator `---\n`.
 
 use std::collections::HashMap;
@@ -22,11 +22,11 @@ use error::{Error, Result};
 use parser;
 use template::TemplateMap;
 
-/// A convenient alias type for the data contained in the header of a Ferrum
+/// A convenient alias type for the data contained in the header of a Ferru
 /// document.
 pub type Header = HashMap<String, String>;
 
-/// A struct representation of a Ferrum document, consisting of a YAML header
+/// A struct representation of a Ferru document, consisting of a YAML header
 /// and a `String` body.
 #[derive(PartialEq, Debug)]
 pub struct Document {
