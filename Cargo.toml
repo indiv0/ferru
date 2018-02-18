@@ -1,8 +1,12 @@
 [package]
-
 name = "ferru"
 version = "0.3.0"
 authors = [ "Nikita Pekin <contact@nikitapek.in>" ]
+description = "A lightweight, blazing fast static site generator"
+license = "BSD-3-Clause"
+documentation = "https://docs.rs/ferru"
+homepage = "https://github.com/indiv0/ferru"
+repository = "https://github.com/indiv0/ferru"
 
 [dependencies]
 env_logger = "0.3.5"
