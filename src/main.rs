@@ -54,6 +54,6 @@ fn run(m: ArgMatches) {
 fn config_from_matches<'a>(matches: &'a ArgMatches) -> Config<'a> {
     Config {
         source_directory: matches.value_of("source"),
-        dest_directory: matches.value_of("dest"),
+        dest_directory: matches.value_of("destination"),
     }
 }
