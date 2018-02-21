@@ -41,11 +41,11 @@ pub fn build(config: &Config) -> Result<()> {
     debug!("Cleaning destination directory");
     if !dest.exists() {
         println!("Destination directory \"{}\" does not exist, creating.", dest.display());
+        fs::create_dir(&dest)?;
     } else {
         println!("Cleaning destination directory \"{}\".", dest.display());
-        try!(fs::remove_dir_all(&dest));
+        remove_dir_contents(&dest)?;
     }
-    try!(fs::create_dir(&dest));
 
     // Load the templates.
     debug!("Loading templates");
@@ -82,6 +82,24 @@ pub fn build(config: &Config) -> Result<()> {
     for (key, document) in documents.into_iter() {
         let new_dest = dest.join(&key);
         try!(document.render_to_file(&new_dest, &templates));
+    }
+
+    Ok(())
+}
+
+fn remove_dir_contents(path: &Path) -> Result<()> {
+    if path.is_dir() {
+        for entry in fs::read_dir(path)? {
+            let entry = entry?;
+            let path = entry.path();
+            if path.is_dir() {
+                fs::remove_dir_all(path)?;
+            } else {
+                fs::remove_file(path)?;
+            }
+        }
+    } else {
+        warn!("Attempted to remove dir contents for a file path");
     }
 
     Ok(())
