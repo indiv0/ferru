@@ -21,8 +21,6 @@
 extern crate clap;
 extern crate env_logger;
 extern crate ferru;
-#[macro_use]
-extern crate log;
 extern crate mustache;
 
 use clap::{App, ArgMatches};
