@@ -79,6 +79,8 @@ pub fn build(config: &Config) -> Result<()> {
     }));
 
     debug!("Rendering documents");
+    // Render non-static files to a www/ directory.
+    let dest = dest.join("www");
     for (key, document) in documents.into_iter() {
         let new_dest = dest.join(&key);
         try!(document.render_to_file(&new_dest, &templates));
