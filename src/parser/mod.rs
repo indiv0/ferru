@@ -7,15 +7,13 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-extern crate yaml_rust;
+extern crate serde_yaml;
 
 pub use self::error::{Error, Result};
 
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 use document::{Document, Header};
-
-use self::yaml_rust::YamlLoader;
 
 mod error;
 
@@ -39,51 +37,17 @@ pub fn parse_document(content: &str) -> Result<Document> {
         let header_string = content_split.next().unwrap_or("");
         content = content_split.next().unwrap_or("");
 
-        try!(parse_header(header_string))
+        parse_header(header_string)?
     } else {
-        HashMap::new()
+        BTreeMap::new()
     };
 
     Ok(Document::new(header, content))
 }
 
 fn parse_header(s: &str) -> Result<Header> {
-    // Parse the YAML from the header string to a `Yaml` enum.
-    let yaml = try!(YamlLoader::load_from_str(s));
-    // If the resulting `Vec<Yaml>` enum is of length 0, then the header is
-    // empty.
-    if yaml.is_empty() {
-        return Ok(HashMap::new())
-    }
-    // Convert the `Yaml` enum to a `BTreeMap<Yaml, Yaml>`.
-    // Return an `InvalidHeaderFormat` error if an error occurs while converting
-    // the enum.
-    let tree = try!(
-        yaml[0].as_hash()
-        .ok_or(Error::InvalidHeaderFormat(s.to_owned()))
-        );
-    // Clone the key and value `Yaml` enums from a `BTreeMap` to a `HashMap`,
-    // converting them to `String`s as we go.
-    // If an error occurs while converting the key or value to a `String`,
-    // return an `InvalidHeaderKey` or `InvalidHeaderValue` error.
-    let map = {
-        let mut map = HashMap::new();
-        for (key, value) in tree {
-            map.insert(
-                try!(key.as_str()
-                     .ok_or(Error::InvalidHeaderKey(key.clone()))
-                     .map(ToOwned::to_owned)
-                ),
-                try!(value.as_str()
-                     .ok_or(Error::InvalidHeaderValue(value.clone()))
-                     .map(ToOwned::to_owned)
-                ),
-            );
-        }
-        map
-    };
-
-    Ok(map)
+    // Parse the YAML from the header string.
+    Ok(serde_yaml::from_str(s)?)
 }
 
 #[cfg(test)]

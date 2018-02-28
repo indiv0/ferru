@@ -12,7 +12,7 @@ repository = "https://github.com/indiv0/ferru"
 env_logger = "0.3.5"
 log = "0.3.6"
 mustache = "0.7.0"
-yaml-rust = "0.3.3"
+serde_yaml = "0.7.3"
 
 [dependencies.clap]
 features = ["color", "suggestions", "yaml"]

@@ -8,7 +8,7 @@
 // except according to those terms.
 
 use std::fs;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use std::ffi::OsStr;
 use std::path::{Path, PathBuf};
 
@@ -74,9 +74,9 @@ pub fn build(config: &Config) -> Result<()> {
     }
 
     debug!("Loading documents from disk");
-    let documents: HashMap<PathBuf, document::Document> = try!(document::load_documents_from_disk(&source.join("_posts"), |path| {
+    let documents: BTreeMap<PathBuf, document::Document> = document::load_documents_from_disk(&source.join("_posts"), |path| {
         !util::is_hidden(&path)
-    }));
+    })?;
 
     debug!("Rendering documents");
     // Render non-static files to a www/ directory.

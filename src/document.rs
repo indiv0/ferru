@@ -12,7 +12,7 @@
 //! A Ferru document consists of an optional header and a body, with the two
 //! separated with the separator `---\n`.
 
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use std::fs::{self, File};
 use std::path::{Path, PathBuf};
 
@@ -24,7 +24,7 @@ use template::TemplateMap;
 
 /// A convenient alias type for the data contained in the header of a Ferru
 /// document.
-pub type Header = HashMap<String, String>;
+pub type Header = BTreeMap<String, String>;
 
 /// A struct representation of a Ferru document, consisting of a YAML header
 /// and a `String` body.
@@ -64,7 +64,7 @@ impl Document {
         try!(fs::create_dir_all(&try!(parent_path)));
 
         let mut file = try!(File::create(file_path));
-        let mut data = HashMap::new();
+        let mut data = BTreeMap::new();
 
         data.insert("content", try!(self.as_html()));
 
@@ -88,12 +88,12 @@ impl Document {
 
 /// Recursively traverses the specified directory and loads the all files
 /// matching the specified criteria as document files.
-pub fn load_documents_from_disk<F>(documents_path: &Path, mut criteria: F) -> Result<HashMap<PathBuf, Document>>
+pub fn load_documents_from_disk<F>(documents_path: &Path, mut criteria: F) -> Result<BTreeMap<PathBuf, Document>>
     where F : FnMut(&Path) -> bool
 {
     use util;
 
-    let mut documents = HashMap::new();
+    let mut documents = BTreeMap::new();
 
     try!(util::walk_dir(
         documents_path,
